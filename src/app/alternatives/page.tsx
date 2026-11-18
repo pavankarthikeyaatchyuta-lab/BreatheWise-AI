@@ -208,10 +208,10 @@ export default function AlternativesPage() {
               The Scientific Exposure vs. Emissions Reality (Crucial Medical Guidance)
             </h3>
             <p className="text-xs text-amber-900 leading-relaxed">
-              <strong>Never assume that lower emissions equals lower personal smog exposure.</strong> While walking or cycling produces exactly zero vehicle emissions, physical cardiovascular exertion increases minute ventilation (inhaled air volume) by 300% to 500%.
+              <strong>Never assume that lower emissions equals lower personal smog exposure.</strong> While walking or cycling produces zero vehicle emissions, physical aerobic exertion substantially increases respiratory minute ventilation (inhaled air volume per minute) compared to resting passengers.
             </p>
             <p className="text-xs text-amber-900 leading-relaxed">
-              Walking along congested diesel corridors during morning winter smog leads to severe particulate deposition deep in lung bronchioles. Conversely, riding the electric metro train provides both high carbon efficiency AND a filtered, enclosed cabin that shields passengers from toxic road-level exhaust wakes.
+              Walking along congested diesel corridors during peak winter smog leads to elevated particulate intake unless protected by an N95 respirator. Conversely, riding an electrified rapid transit system (like the Delhi Metro) combines high per-passenger carbon efficiency with a filtered, enclosed cabin that isolates commuters from toxic road-level exhaust wakes.
             </p>
           </div>
         </div>

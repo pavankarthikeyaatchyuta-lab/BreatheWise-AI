@@ -93,7 +93,7 @@ export const TRANSPORT_FACTORS: Record<TransportMode, TransportEmissionFactor> =
     estimatedCostPerKmInr: 0,
     averageSpeedKmph: 12,
     exposureRiskLevel: 'VERY_HIGH',
-    exposureExplanation: 'CRITICAL SMOG WARNING: Zero emissions generated, BUT physical exertion increases minute ventilation (inhaled air volume) by 300% to 500%. Walking or cycling along busy diesel arterial corridors during morning smog peaks leads to heavy particulate deposition in deep lungs.',
+    exposureExplanation: 'PHYSIOLOGICAL EXPOSURE NOTICE: Zero vehicle emissions generated; however, physical aerobic exertion substantially increases respiratory minute ventilation (breathing volume per minute) compared to resting vehicle passengers. Exercising or walking along heavy diesel traffic corridors during severe morning smog peaks elevates personal particulate deposition in deep alveolar airways.',
   },
 };
 

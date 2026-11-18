@@ -94,9 +94,10 @@ export default function DashboardPage() {
     );
   };
 
-  const aqi = aqiData.current.aqi ?? 320;
-  const category = aqiData.current.category ?? 'Severe';
-  const dominant = aqiData.current.dominantPollutantName ?? 'PM2.5 (Fine Particulate Matter)';
+  const isOfficialValid = aqiData.current.validation?.isValidOfficial ?? true;
+  const aqi = aqiData.current.aqi;
+  const category = aqiData.current.category || (isOfficialValid ? 'Severe' : 'Insufficient Data');
+  const dominant = aqiData.current.dominantPollutantName || 'Evaluating';
   const grap = evaluateGRAPStage(aqi, aqiData.isNCR);
 
   // Category Color Map
@@ -107,6 +108,7 @@ export default function DashboardPage() {
     'Poor': { bg: 'bg-orange-500', text: 'text-orange-950', border: 'border-orange-300', badge: 'bg-orange-100 text-orange-800' },
     'Very Poor': { bg: 'bg-red-500', text: 'text-red-950', border: 'border-red-300', badge: 'bg-red-100 text-red-800' },
     'Severe': { bg: 'bg-rose-900', text: 'text-white', border: 'border-rose-700', badge: 'bg-rose-100 text-rose-900' },
+    'Insufficient Data': { bg: 'bg-slate-700', text: 'text-white', border: 'border-slate-600', badge: 'bg-slate-200 text-slate-800' },
   };
 
   const activeStyle = categoryStyles[category] || categoryStyles['Severe'];
@@ -170,18 +172,23 @@ export default function DashboardPage() {
                 Statutory CPCB NAQI (India Standard)
               </span>
               <div className="flex items-baseline gap-3 mt-1">
-                <span className="text-6xl sm:text-7xl font-black tracking-tight text-slate-900">
-                  {aqi}
+                <span className="text-5xl sm:text-7xl font-black tracking-tight text-slate-900">
+                  {aqi !== null ? aqi : '—'}
                 </span>
                 <div>
                   <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold tracking-wide uppercase ${activeStyle.badge}`}>
                     {category}
                   </span>
                   <div className="text-xs text-slate-500 font-medium mt-1">
-                    Dominant: <strong className="text-slate-800">{dominant}</strong>
+                    Dominant: <strong className="text-slate-800">{isOfficialValid ? dominant : 'Insufficient Pollutant Data'}</strong>
                   </div>
                 </div>
               </div>
+              {!isOfficialValid && aqiData.current.validation.reasons.length > 0 && (
+                <div className="mt-2 text-xs text-amber-800 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                  <strong>Notice:</strong> {aqiData.current.validation.reasons[0]} Individual pollutant concentrations are reported below.
+                </div>
+              )}
             </div>
 
             {/* Health Advisory Tag */}

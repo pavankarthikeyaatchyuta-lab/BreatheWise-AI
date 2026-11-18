@@ -5,7 +5,7 @@
  */
 
 import { DiurnalForecastHour, ProvenanceMetadata, AQICategory, PollutantKey } from '../types/aqi';
-import { calculateSubIndex, getCategoryFromIndex } from './cpcb-calc';
+import { calculateSubIndex, getCategoryFromIndex, evaluateCPCBNAQI } from './cpcb-calc';
 
 export interface OpenMeteoHourlyResponse {
   latitude: number;
@@ -89,18 +89,56 @@ export function parseOpenMeteoForecast(
 }
 
 /**
+ * Extracts current-hour model forecast concentrations and evaluates CPCB breakpoints
+ * without fabricating missing pollutants like NH3 or Pb.
+ */
+export function getModelDerivedCurrentResult(
+  data: OpenMeteoHourlyResponse,
+  provenance: ProvenanceMetadata
+) {
+  const inputs: Partial<Record<PollutantKey, { value: number; hoursRecorded: number }>> = {};
+
+  if (data.hourly.pm2_5 && data.hourly.pm2_5.length > 0 && data.hourly.pm2_5[0] !== null) {
+    inputs.pm25 = { value: data.hourly.pm2_5[0], hoursRecorded: 24 };
+  }
+  if (data.hourly.pm10 && data.hourly.pm10.length > 0 && data.hourly.pm10[0] !== null) {
+    inputs.pm10 = { value: data.hourly.pm10[0], hoursRecorded: 24 };
+  }
+  if (data.hourly.nitrogen_dioxide && data.hourly.nitrogen_dioxide.length > 0 && data.hourly.nitrogen_dioxide[0] !== null) {
+    inputs.no2 = { value: data.hourly.nitrogen_dioxide[0], hoursRecorded: 24 };
+  }
+  if (data.hourly.sulphur_dioxide && data.hourly.sulphur_dioxide.length > 0 && data.hourly.sulphur_dioxide[0] !== null) {
+    inputs.so2 = { value: data.hourly.sulphur_dioxide[0], hoursRecorded: 24 };
+  }
+  if (data.hourly.carbon_monoxide && data.hourly.carbon_monoxide.length > 0 && data.hourly.carbon_monoxide[0] !== null) {
+    // Open-Meteo CO is in µg/m³; CPCB expects mg/m³
+    inputs.co = { value: Number((data.hourly.carbon_monoxide[0] / 1000).toFixed(2)), hoursRecorded: 8 };
+  }
+  if (data.hourly.ozone && data.hourly.ozone.length > 0 && data.hourly.ozone[0] !== null) {
+    inputs.o3 = { value: data.hourly.ozone[0], hoursRecorded: 8 };
+  }
+
+  // Note: NH3 and Pb are NOT provided by Open-Meteo atmospheric forecast models
+  // and are intentionally omitted so they are never fabricated.
+
+  return evaluateCPCBNAQI(inputs, provenance);
+}
+
+/**
  * Fetches 24-hour forecast from Open-Meteo
  */
 export async function fetchOpenMeteoForecast(
   lat: number,
   lon: number
-): Promise<{ forecast24h: DiurnalForecastHour[]; provenance: ProvenanceMetadata } | null> {
+): Promise<{ forecast24h: DiurnalForecastHour[]; currentModelResult: ReturnType<typeof getModelDerivedCurrentResult>; provenance: ProvenanceMetadata } | null> {
   try {
     const url = `https://air-quality-api.open-meteo.com/v1/air_quality?latitude=${lat}&longitude=${lon}&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto&forecast_days=2`;
     const res = await fetch(url, { next: { revalidate: 1800 } }); // Cache 30 mins
     if (!res.ok) return null;
     const json: OpenMeteoHourlyResponse = await res.json();
-    return parseOpenMeteoForecast(json);
+    const { forecast24h, provenance } = parseOpenMeteoForecast(json);
+    const currentModelResult = getModelDerivedCurrentResult(json, provenance);
+    return { forecast24h, currentModelResult, provenance };
   } catch {
     return null; // Return null so aggregator falls back to demo data
   }

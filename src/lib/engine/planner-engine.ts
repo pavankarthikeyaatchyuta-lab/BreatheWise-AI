@@ -73,7 +73,7 @@ export function generateDailyPlan(
       adaptedTime: '08:05',
       adaptedLocation: 'OUTDOOR_PROTECTED',
       reasonForChange:
-        'Slight 20-minute departure delay reduces queuing alongside idling school buses and vans. Ensure child wears a certified child-sized N95 respirator if stepping onto the street.',
+        'Behavioral heuristic: Adjusting departure by 15-20 minutes avoids the peak 15-minute school gate drop-off rush, minimizing student exposure to idling vehicle exhaust fumes (Note: this is a behavioral schedule heuristic, not live GPS traffic tracking). Ensure child wears a certified child-sized N95 respirator if stepping onto the street.',
       protectionRequired: profile.hasInfantsOrChildren ? 'N95_RESPIRATOR' : 'NONE',
       estimatedAQIAtOriginalTime: 395,
       estimatedAQIAtAdaptedTime: 340,
@@ -134,7 +134,7 @@ export function generateDailyPlan(
   }
 
   const vehicleIdlingWarning =
-    'ANTI-IDLING PROTOCOL: Vehicle engines idling for more than 10 seconds consume more fuel and emit more tailpipe PM2.5 and NOx than restarting. Turn off your ignition at traffic signals with countdown timers exceeding 15 seconds.';
+    'ANTI-IDLING PROTOCOL (PCRA / SAE Benchmark): Petroleum Conservation Research Association (PCRA, India) guidelines demonstrate that modern fuel-injected engines use less fuel and emit substantially lower tailpipe particulates upon restarting than idling for >10-15 seconds. Switch off ignition at traffic signals where countdown timers exceed 15-20 seconds.';
 
   const overallAdvisory = isSevere
     ? 'SEVERE SMOG EPISODE ACTIVE: The entire diurnal cycle is elevated. Eliminate non-essential outdoor travel. All outdoor aerobic activities should be moved indoors.'

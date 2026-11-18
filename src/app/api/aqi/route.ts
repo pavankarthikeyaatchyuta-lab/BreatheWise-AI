@@ -56,18 +56,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(liveState);
   }
 
-  // If only forecast is available, evaluate estimated category from model PM2.5
+  // If only forecast is available, evaluate estimated category directly from model concentrations
   if (forecastResult) {
-    const demoFn = DEMO_CITIES[city] || getDelhiDemoState;
-    const baseDemo = demoFn();
     const modelDerivedState: AirQualityState = {
       city,
       region: cityInfo.region,
       isNCR,
-      current: {
-        ...baseDemo.current,
-        provenance: forecastResult.provenance,
-      },
+      current: forecastResult.currentModelResult,
       forecast24h: forecastResult.forecast24h,
       provenance: forecastResult.provenance,
     };
