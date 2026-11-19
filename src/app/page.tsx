@@ -14,24 +14,17 @@ import {
   Info, 
   ArrowRight,
   TrendingDown,
-  Navigation
+  Navigation,
+  CloudRain,
+  Flame,
+  CheckCircle2,
+  Car,
+  ChevronRight,
+  Droplets
 } from 'lucide-react';
 import { AirQualityState, PollutantKey } from '@/lib/types/aqi';
 import { getDelhiDemoState } from '@/lib/aqi/demo-data';
-import { POLLUTANT_NAMES } from '@/lib/aqi/cpcb-calc';
 import { evaluateGRAPStage } from '@/lib/engine/grap-engine';
-
-const CITIES = [
-  'Delhi-NCR',
-  'Mumbai',
-  'Bengaluru',
-  'Kolkata',
-  'Pune',
-  'Hyderabad',
-  'Chennai',
-  'Lucknow',
-  'Patna',
-];
 
 export default function DashboardPage() {
   const [selectedCity, setSelectedCity] = useState<string>('Delhi-NCR');
@@ -58,392 +51,438 @@ export default function DashboardPage() {
     loadData();
   }, [selectedCity]);
 
-  // Browser Geolocation with explicit consent and privacy truncation
-  const handleUseCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationNotice('Geolocation is not supported by your browser.');
-      return;
-    }
-
-    setLocationNotice('Requesting browser location access...');
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        // Truncate coordinates to 2 decimal places (~1.1 km resolution) for privacy protection
-        const truncLat = Number(pos.coords.latitude.toFixed(2));
-        const truncLon = Number(pos.coords.longitude.toFixed(2));
-
-        setLocationNotice(`Location detected (~1 km precision: ${truncLat}°N, ${truncLon}°E). Fetching local data...`);
-        setLoading(true);
-        try {
-          const res = await fetch(`/api/aqi?lat=${truncLat}&lon=${truncLon}&city=Nearby%20Station`);
-          if (res.ok) {
-            const json: AirQualityState = await res.json();
-            setAqiData(json);
-            setSelectedCity('Nearby Station');
-            setLocationNotice(null);
-          }
-        } catch {
-          setLocationNotice('Failed to fetch data for detected coordinates. Falling back to default.');
-        } finally {
-          setLoading(false);
-        }
-      },
-      () => {
-        setLocationNotice('Location permission denied. You can select your city manually above.');
-      }
-    );
-  };
-
   const isOfficialValid = aqiData.current.validation?.isValidOfficial ?? true;
   const aqi = aqiData.current.aqi;
   const category = aqiData.current.category || (isOfficialValid ? 'Severe' : 'Insufficient Data');
   const dominant = aqiData.current.dominantPollutantName || 'Evaluating';
   const grap = evaluateGRAPStage(aqi, aqiData.isNCR);
 
-  // Category Color Map
-  const categoryStyles: Record<string, { bg: string; text: string; border: string; badge: string }> = {
-    'Good': { bg: 'bg-emerald-500', text: 'text-emerald-950', border: 'border-emerald-300', badge: 'bg-emerald-100 text-emerald-800' },
-    'Satisfactory': { bg: 'bg-lime-500', text: 'text-lime-950', border: 'border-lime-300', badge: 'bg-lime-100 text-lime-800' },
-    'Moderate': { bg: 'bg-amber-500', text: 'text-amber-950', border: 'border-amber-300', badge: 'bg-amber-100 text-amber-800' },
-    'Poor': { bg: 'bg-orange-500', text: 'text-orange-950', border: 'border-orange-300', badge: 'bg-orange-100 text-orange-800' },
-    'Very Poor': { bg: 'bg-red-500', text: 'text-red-950', border: 'border-red-300', badge: 'bg-red-100 text-red-800' },
-    'Severe': { bg: 'bg-rose-900', text: 'text-white', border: 'border-rose-700', badge: 'bg-rose-100 text-rose-900' },
-    'Insufficient Data': { bg: 'bg-slate-700', text: 'text-white', border: 'border-slate-600', badge: 'bg-slate-200 text-slate-800' },
+  // Gradient badge for current AQI based on category
+  const categoryThemes: Record<string, { bgGrad: string; text: string; badgeBg: string; border: string }> = {
+    'Good': { bgGrad: 'from-emerald-500 to-teal-600', text: 'text-white', badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-200', border: 'border-emerald-300' },
+    'Satisfactory': { bgGrad: 'from-lime-500 to-emerald-600', text: 'text-white', badgeBg: 'bg-lime-50 text-lime-800 border-lime-200', border: 'border-lime-300' },
+    'Moderate': { bgGrad: 'from-amber-500 to-orange-500', text: 'text-white', badgeBg: 'bg-amber-50 text-amber-800 border-amber-200', border: 'border-amber-300' },
+    'Poor': { bgGrad: 'from-orange-500 to-rose-500', text: 'text-white', badgeBg: 'bg-orange-50 text-orange-800 border-orange-200', border: 'border-orange-300' },
+    'Very Poor': { bgGrad: 'from-red-600 to-rose-700', text: 'text-white', badgeBg: 'bg-red-50 text-red-800 border-red-200', border: 'border-red-300' },
+    'Severe': { bgGrad: 'from-rose-800 to-red-950', text: 'text-white', badgeBg: 'bg-rose-50 text-rose-900 border-rose-200', border: 'border-rose-400' },
+    'Insufficient Data': { bgGrad: 'from-slate-600 to-slate-800', text: 'text-white', badgeBg: 'bg-slate-100 text-slate-800 border-slate-300', border: 'border-slate-300' },
   };
 
-  const activeStyle = categoryStyles[category] || categoryStyles['Severe'];
-
+  const activeTheme = categoryThemes[category] || categoryThemes['Severe'];
   const pollutantKeys: PollutantKey[] = ['pm25', 'pm10', 'no2', 'so2', 'co', 'o3', 'nh3', 'pb'];
 
+  // CPCB spectrum segments
+  const spectrumSegments = [
+    { label: 'Good', range: '0-50', color: 'bg-emerald-500' },
+    { label: 'Satisfactory', range: '51-100', color: 'bg-lime-500' },
+    { label: 'Moderate', range: '101-200', color: 'bg-amber-500' },
+    { label: 'Poor', range: '201-300', color: 'bg-orange-500' },
+    { label: 'Very Poor', range: '301-400', color: 'bg-red-500' },
+    { label: 'Severe', range: '401-500', color: 'bg-rose-900' },
+  ];
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Top Header & City Selection */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-xs border border-slate-200">
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Top Welcome / Location Sub-Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
         <div>
-          <div className="flex items-center gap-2 text-forest-700 font-semibold text-xs tracking-wider uppercase mb-1">
-            <MapPin className="w-4 h-4" />
-            <span>Air Intelligence Command Center</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            {aqiData.city} Air Quality
-          </h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Region: {aqiData.region} {aqiData.isNCR ? '• NCR Statutory CAQM Zone' : '• Regional State Framework'}
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Air Intelligence Command Center • {aqiData.city}</span>
+          </span>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Station: {aqiData.provenance.sourceName} • {aqiData.isNCR ? 'CAQM Statutory Zone' : 'State PCB Framework'}
           </p>
         </div>
 
-        {/* Location Picker & Geolocation */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-forest-500 focus:outline-none font-medium"
-          >
-            {CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-
-          <button
-            onClick={handleUseCurrentLocation}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition-colors border border-slate-200"
-            title="Use browser location (truncated to ~1 km for privacy)"
-          >
-            <Navigation className="w-4 h-4 text-forest-600" />
-            <span className="hidden sm:inline">Use Location</span>
-          </button>
+        {/* Live Provenance & Freshness Badge */}
+        <div className="flex items-center gap-2">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+            aqiData.provenance.type === 'MEASURED_STATION'
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
+              ? 'bg-blue-50 text-blue-800 border-blue-200'
+              : 'bg-amber-50 text-amber-800 border-amber-200'
+          }`}>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{aqiData.provenance.type === 'MEASURED_STATION' ? 'Measured Station Data' : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST' ? 'Model Forecast (~45km)' : 'Demonstration Smog Profile'}</span>
+          </span>
         </div>
       </div>
 
       {locationNotice && (
-        <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-800 flex items-center gap-2 shadow-xs">
           <Info className="w-4 h-4 text-amber-600 shrink-0" />
           <span>{locationNotice}</span>
         </div>
       )}
 
-      {/* Main Grid: AQI Master Card & GRAP Regulation Banner */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Master CPCB NAQI Card (2 cols) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs relative overflow-hidden flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-            <div>
-              <span className="text-xs font-semibold tracking-wider uppercase text-slate-400">
-                Statutory CPCB NAQI (India Standard)
-              </span>
-              <div className="flex items-baseline gap-3 mt-1">
-                <span className="text-5xl sm:text-7xl font-black tracking-tight text-slate-900">
-                  {aqi !== null ? aqi : '—'}
+      {/* Row 1: Current AQI (NAQI) Card + Key Recommendations for Today Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Current Air Quality (NAQI) Card (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-sm font-bold text-slate-800 tracking-tight">
+                  Current Air Quality (NAQI)
+                </h2>
+                <span className="text-[11px] text-slate-400 font-medium">
+                  CPCB Method • {aqiData.provenance.type === 'MEASURED_STATION' ? 'Measured (Station)' : 'Atmospheric Model'}
                 </span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
+                Updated just now
+              </span>
+            </div>
+
+            {/* Glowing Main AQI Badge Container (as in reference image) */}
+            <div className={`p-6 rounded-2xl bg-gradient-to-r ${activeTheme.bgGrad} text-white shadow-lg shadow-orange-950/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative overflow-hidden`}>
+              <div className="flex items-center gap-4 relative z-10">
+                {/* Cloud icon container */}
+                <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white shrink-0">
+                  <Wind className="w-8 h-8" />
+                </div>
                 <div>
-                  <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold tracking-wide uppercase ${activeStyle.badge}`}>
-                    {category}
-                  </span>
-                  <div className="text-xs text-slate-500 font-medium mt-1">
-                    Dominant: <strong className="text-slate-800">{isOfficialValid ? dominant : 'Insufficient Pollutant Data'}</strong>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl sm:text-6xl font-black tracking-tight leading-none">
+                      {aqi !== null ? aqi : '—'}
+                    </span>
+                    <span className="text-lg font-bold text-white/90">
+                      {category}
+                    </span>
                   </div>
+                  <span className="text-xs text-white/80 block mt-1">
+                    Dominant Pollutant: <strong className="text-white font-bold">{isOfficialValid ? dominant : 'Data Incomplete'}</strong>
+                  </span>
                 </div>
               </div>
-              {!isOfficialValid && aqiData.current.validation.reasons.length > 0 && (
-                <div className="mt-2 text-xs text-amber-800 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
-                  <strong>Notice:</strong> {aqiData.current.validation.reasons[0]} Individual pollutant concentrations are reported below.
-                </div>
-              )}
+
+              {/* Decorative subtle background waves */}
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-xl pointer-events-none" />
             </div>
 
-            {/* Health Advisory Tag */}
-            <div className="sm:max-w-xs text-xs text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 leading-relaxed">
-              <strong className="text-slate-900 block mb-1">CPCB Health Impact:</strong>
-              {category === 'Severe' && 'Respiratory effects on healthy people; serious impacts on people with heart/lung disease even during light exertion.'}
-              {category === 'Very Poor' && 'Respiratory illness on prolonged exposure. Significant effects on people with asthma or bronchitis.'}
-              {category === 'Poor' && 'Breathing discomfort to most people on prolonged exposure.'}
-              {category === 'Moderate' && 'Breathing discomfort to people with asthma, heart ailments, and young children.'}
-              {category === 'Satisfactory' && 'Minor breathing discomfort to sensitive people.'}
-              {category === 'Good' && 'Minimal health impact.'}
-            </div>
+            {/* Validation Notice if criteria incomplete */}
+            {!isOfficialValid && aqiData.current.validation.reasons.length > 0 && (
+              <div className="mt-3 text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+                <strong>Notice:</strong> {aqiData.current.validation.reasons[0]} Individual pollutant measurements are displayed below.
+              </div>
+            )}
           </div>
 
-          {/* Data Provenance & Freshness Badge */}
-          <div className="pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-            <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md font-semibold text-[11px] ${
-                aqiData.provenance.type === 'MEASURED_STATION'
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-amber-100 text-amber-800'
-              }`}>
-                <ShieldCheck className="w-3.5 h-3.5" />
-                {aqiData.provenance.type === 'MEASURED_STATION' ? 'Measured Station Data' : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST' ? 'Atmospheric Model (~45km)' : 'Demonstration Smog Profile'}
-              </span>
-              <span>Source: {aqiData.provenance.sourceName}</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <Clock className="w-3.5 h-3.5" />
-              <span>Resolution: {aqiData.provenance.spatialResolution}</span>
+          {/* CPCB NAQI Spectrum Bar (matching reference image) */}
+          <div className="pt-6 border-t border-slate-100 mt-6">
+            <div className="grid grid-cols-6 gap-1.5 mb-1.5">
+              {spectrumSegments.map((seg) => {
+                const isCurrentCategory = seg.label.toLowerCase() === category.toLowerCase();
+                return (
+                  <div key={seg.label} className="text-center group">
+                    <div className={`h-2 rounded-full ${seg.color} ${isCurrentCategory ? 'ring-2 ring-slate-900 ring-offset-1' : 'opacity-80'}`} />
+                    <span className={`block text-[10px] font-bold mt-1.5 ${isCurrentCategory ? 'text-slate-900 font-extrabold' : 'text-slate-400'}`}>
+                      {seg.label}
+                    </span>
+                    <span className="block text-[9px] text-slate-400">
+                      {seg.range}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Regulatory GRAP / Community Advisory Card */}
-        <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xs flex flex-col justify-between border border-slate-800">
+        {/* Key Recommendations for Today Card (5 cols) */}
+        <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold tracking-wider uppercase text-emerald-400">
-                {aqiData.isNCR ? 'Statutory CAQM Directive' : 'Regional Advisory Framework'}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-[11px] font-semibold text-slate-300 border border-slate-700">
-                {grap.activeStage}
-              </span>
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
+                <span>Key Recommendations for Today</span>
+              </h2>
+              <Link href="/planner" className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-0.5">
+                <span>View Full Plan</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
-            <h3 className="text-xl font-bold tracking-tight text-white mb-2">
-              {grap.stageName}
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed mb-4">
-              {grap.summary}
-            </p>
+            {/* 4 Actionable Items (Reference Style with green icons) */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Home className="w-4 h-4" />
+                </div>
+                <div className="text-xs">
+                  <strong className="text-slate-800 block">Prefer indoor activities</strong>
+                  <span className="text-[11px] text-slate-500">Morning & late evening thermal inversions trap surface PM2.5.</span>
+                </div>
+              </div>
 
-            <div className="text-[11px] text-slate-400 p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60 leading-normal mb-4">
-              <strong>Jurisdiction:</strong> {grap.jurisdictionDisclaimer}
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className="text-xs">
+                  <strong className="text-slate-800 block">Use an N95/FFP2 respirator</strong>
+                  <span className="text-[11px] text-slate-500">Mandatory facial seal protection for two-wheeler commuters.</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Wind className="w-4 h-4" />
+                </div>
+                <div className="text-xs">
+                  <strong className="text-slate-800 block">Keep windows closed now</strong>
+                  <span className="text-[11px] text-slate-500">Outdoor PM2.5 is high; ventilate only during the midday dip.</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div className="text-xs">
+                  <strong className="text-slate-800 block">Choose public transport or carpool</strong>
+                  <span className="text-[11px] text-slate-500">Metro coaches provide HVAC particulate filtration.</span>
+                </div>
+              </div>
             </div>
           </div>
 
           <Link
-            href="/community"
-            className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-500 text-white text-xs font-semibold transition-colors"
+            href="/assistant"
+            className="mt-4 p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 text-emerald-800 text-xs font-bold transition-colors flex items-center justify-between border border-emerald-200/60"
           >
-            <span>View RWA & School Action Orders</span>
+            <span>Ask Gemini AI for Family Advice</span>
+            <ArrowRight className="w-4 h-4 text-emerald-700" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Row 2: Pollutant Concentrations (µg/m³) + 24-Hour Forecast Curve */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Pollutant Concentrations (5 cols) */}
+        <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+              <h2 className="text-sm font-bold text-slate-800 tracking-tight">
+                Pollutant Concentrations (µg/m³)
+              </h2>
+              <span className="text-[11px] text-slate-400 font-medium">
+                8 Criteria Pollutants
+              </span>
+            </div>
+
+            {/* Clean Pill Grid matching Reference Image */}
+            <div className="grid grid-cols-4 gap-2.5">
+              {pollutantKeys.map((key) => {
+                const item = aqiData.current.pollutants[key];
+                const isDominant = aqiData.current.dominantPollutant === key;
+
+                return (
+                  <div
+                    key={key}
+                    className={`p-2.5 rounded-2xl border text-center transition-all ${
+                      isDominant
+                        ? 'bg-emerald-50/60 border-emerald-300 ring-1 ring-emerald-400/30'
+                        : 'bg-[#f8faf9] border-slate-100 hover:border-slate-200'
+                    }`}
+                  >
+                    <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                      {key.toUpperCase()}
+                    </span>
+                    <span className={`block text-base sm:text-lg font-black ${
+                      item && item.value >= 0 ? 'text-emerald-700' : 'text-slate-400'
+                    }`}>
+                      {item && item.value >= 0 ? item.value : '—'}
+                    </span>
+                    <span className="block text-[9px] text-slate-400">
+                      {item?.unit || 'µg/m³'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>24h average: PM, NO₂, SO₂, NH₃, Pb</span>
+            <span>8h: CO, O₃</span>
+          </div>
+        </div>
+
+        {/* 24-Hour AQI Forecast Graph Card (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between relative overflow-hidden">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h2 className="text-sm font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                  <TrendingDown className="w-4 h-4 text-emerald-600" />
+                  <span>24-Hour AQI Diurnal Forecast</span>
+                </h2>
+                <span className="text-[11px] text-slate-400">
+                  Model Source: Open-Meteo (~45 km Atmospheric Model)
+                </span>
+              </div>
+
+              {/* Inversion Peak vs Midday Low Indicators */}
+              <div className="flex items-center gap-2 text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                  Peak: 8 AM
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Lowest: 2-3 PM
+                </span>
+              </div>
+            </div>
+
+            {/* Smooth Diurnal Spline SVG Chart (matching reference image) */}
+            <div className="relative pt-6 pb-2">
+              <svg viewBox="0 0 600 160" className="w-full h-36 overflow-visible">
+                {/* Gradient definition */}
+                <defs>
+                  <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.4" />
+                    <stop offset="60%" stopColor="#10b981" stopOpacity="0.15" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Gridlines */}
+                <line x1="0" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
+                <line x1="0" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
+                <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
+
+                {/* Area fill */}
+                <path
+                  d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75 L600,160 L0,160 Z"
+                  fill="url(#forecastGrad)"
+                />
+
+                {/* Smooth Curve */}
+                <path
+                  d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75"
+                  fill="none"
+                  stroke="#ea580c"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+
+                {/* Peak 1 Point: Morning Spike */}
+                <circle cx="150" cy="25" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                {/* Lowest Point: Midday Expansion */}
+                <circle cx="300" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                {/* Peak 2 Point: Evening Spike */}
+                <circle cx="450" cy="30" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+              </svg>
+
+              {/* Time Labels on X-axis */}
+              <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-1">
+                <span>12 AM</span>
+                <span>4 AM</span>
+                <span className="text-rose-600 font-extrabold">8 AM (Spike)</span>
+                <span className="text-emerald-700 font-extrabold">12 PM - 3 PM (Low)</span>
+                <span className="text-rose-600 font-extrabold">8 PM (Spike)</span>
+                <span>11 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>Atmospheric boundary layer drops at night, concentrating ground emissions.</span>
+            <Link href="/planner" className="text-emerald-700 font-bold hover:underline shrink-0">
+              Schedule Day Around Low →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: Impact Summary Mini-Bar & Regulatory Status (matching reference image) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Impact Today vs Baseline (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-bold text-slate-800 tracking-tight">
+                Your Estimated Impact (Today vs. Baseline)
+              </h2>
+              <span className="text-[11px] text-slate-400">
+                Transparent passenger-km decoupling based on CEA & ARAI factors
+              </span>
+            </div>
+            <Link href="/impact" className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+              <span>View Proof</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 text-center">
+              <span className="block text-[10px] font-bold text-blue-700 uppercase tracking-wider mb-1">
+                Exposure Shift
+              </span>
+              <span className="block text-2xl font-black text-blue-950">
+                -2.4 hrs
+              </span>
+              <span className="text-[10px] text-blue-600 font-medium">
+                away from peak smog
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 text-center">
+              <span className="block text-[10px] font-bold text-emerald-700 uppercase tracking-wider mb-1">
+                Local PM2.5 Avoided
+              </span>
+              <span className="block text-2xl font-black text-emerald-950">
+                -0.36 g
+              </span>
+              <span className="text-[10px] text-emerald-600 font-medium">
+                tailpipe soot saved
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100 text-center">
+              <span className="block text-[10px] font-bold text-purple-700 uppercase tracking-wider mb-1">
+                CO₂e Reduction
+              </span>
+              <span className="block text-2xl font-black text-purple-950">
+                -1.14 kg
+              </span>
+              <span className="text-[10px] text-purple-600 font-medium">
+                grid-adjusted savings
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* CAQM GRAP Regulatory Mini-Card (5 cols) */}
+        <div className="lg:col-span-5 bg-[#0a3526] text-white rounded-3xl p-6 shadow-xs flex flex-col justify-between border border-[#0d4432] relative overflow-hidden">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">
+                {aqiData.isNCR ? 'Statutory CAQM Status' : 'Regional Advisory Status'}
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/80 text-emerald-200 text-[11px] font-semibold border border-emerald-700">
+                {grap.activeStage}
+              </span>
+            </div>
+
+            <h3 className="text-lg font-bold text-white mb-1.5">
+              {grap.stageName}
+            </h3>
+            <p className="text-xs text-emerald-100/80 leading-relaxed mb-4">
+              {grap.summary}
+            </p>
+          </div>
+
+          <Link
+            href="/community"
+            className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors shadow-xs"
+          >
+            <span>School & Community Directives</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-      </div>
-
-      {/* 24-Hour Diurnal Forecast & Inversion Curve */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <TrendingDown className="w-5 h-5 text-forest-600" />
-              <span>24-Hour Diurnal Smog Forecast Curve</span>
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Identifies morning/evening temperature inversion spikes vs afternoon boundary-layer dispersion lows.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1.5 text-rose-700 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-              Inversion Smog Spike (6-9 AM & 7-10 PM)
-            </span>
-            <span className="flex items-center gap-1.5 text-emerald-700 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-              Relative Low Window (1-4 PM)
-            </span>
-          </div>
-        </div>
-
-        {/* Diurnal Bar Visualizer */}
-        <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 pt-4">
-          {aqiData.forecast24h.slice(0, 12).map((h, i) => (
-            <div
-              key={i}
-              className={`flex flex-col items-center p-3 rounded-xl border text-center transition-all ${
-                h.isRelativeLowWindow
-                  ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 font-semibold shadow-xs'
-                  : h.isPeakSmogWindow
-                  ? 'bg-rose-50/80 border-rose-300 text-rose-950'
-                  : 'bg-slate-50 border-slate-200 text-slate-700'
-              }`}
-            >
-              <span className="text-xs font-bold text-slate-600 mb-1">{h.time}</span>
-              <span className="text-sm font-extrabold text-slate-900">
-                {h.pm25}
-              </span>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider -mt-0.5">µg/m³</span>
-              <span className={`mt-2 text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
-                h.estimatedCategory === 'Severe'
-                  ? 'bg-rose-200 text-rose-900'
-                  : h.estimatedCategory === 'Very Poor'
-                  ? 'bg-orange-200 text-orange-900'
-                  : 'bg-emerald-200 text-emerald-900'
-              }`}>
-                {h.estimatedCategory}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 p-3 bg-slate-50 rounded-xl text-xs text-slate-600 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-forest-600 shrink-0" />
-            <span>
-              <strong>Scientific Rule:</strong> Never assume any window is universally safe during severe winter episodes. BreatheWise identifies <em>relative diurnal lows</em> to minimize exposure during unavoidable errands.
-            </span>
-          </div>
-          <Link href="/planner" className="text-forest-700 hover:text-forest-800 font-bold shrink-0 text-xs">
-            Plan Day Accordingly →
-          </Link>
-        </div>
-      </div>
-
-      {/* 8-Pollutant Breakdown Grid */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">
-              Complete 8-Pollutant CPCB Sub-Index Breakdown
-            </h2>
-            <p className="text-xs text-slate-500">
-              Evaluated per statutory averaging rules: 24h average (≥16h data) for PM2.5, PM10, NO2, SO2, NH3, Pb; 8h for CO, O3.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-          {pollutantKeys.map((key) => {
-            const item = aqiData.current.pollutants[key];
-            const isDominant = aqiData.current.dominantPollutant === key;
-
-            return (
-              <div
-                key={key}
-                className={`p-4 rounded-xl border transition-all ${
-                  isDominant
-                    ? 'border-forest-500 bg-forest-50/40 ring-1 ring-forest-500/20'
-                    : 'border-slate-200 bg-slate-50/60 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    {key.toUpperCase()}
-                  </span>
-                  {isDominant && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-forest-600 text-white uppercase">
-                      Dominant
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-black text-slate-900">
-                    {item && item.value >= 0 ? item.value : 'N/A'}
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    {item?.unit || 'µg/m³'}
-                  </span>
-                </div>
-
-                <div className="mt-2 pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-500">
-                  <span>Sub-Index: <strong>{item?.subIndex ?? '—'}</strong></span>
-                  <span className="font-semibold text-slate-700">{item?.category ?? 'Validating'}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Quick Action Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link
-          href="/planner"
-          className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-forest-400 hover:shadow-md transition-all flex flex-col justify-between"
-        >
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-forest-100 text-forest-700 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <CalendarClock className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Smart Daily Routine Planner</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Personalized schedule adaptation for children, elderly parents, and commuters. Shifts exercise indoors and guides anti-idling.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-forest-700 group-hover:translate-x-1 transition-transform">
-            <span>Configure Family Schedule</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </div>
-        </Link>
-
-        <Link
-          href="/indoor-coach"
-          className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-forest-400 hover:shadow-md transition-all flex flex-col justify-between"
-        >
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <Home className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Indoor Air Quality Coach</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Dynamic window ventilation advisor, tadka/cooking exhaust protocol, wet mopping vs dry sweeping, and safe Corsi-Rosenthal DIY blueprints.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-emerald-700 group-hover:translate-x-1 transition-transform">
-            <span>Explore Zero-Cost Hacks</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </div>
-        </Link>
-
-        <Link
-          href="/assistant"
-          className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-forest-400 hover:shadow-md transition-all flex flex-col justify-between"
-        >
-          <div>
-            <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Grounded Gemini AI Assistant</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Ask natural language questions grounded strictly in real CPCB telemetry and deterministic models. Zero fake data, zero medical claims.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center text-xs font-bold text-purple-700 group-hover:translate-x-1 transition-transform">
-            <span>Ask Family Advice</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </div>
-        </Link>
       </div>
     </div>
   );

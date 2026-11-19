@@ -3,219 +3,382 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
-  ArrowLeftRight, 
   Car, 
   Train, 
   Bike, 
   Bus, 
-  Footprints, 
-  ShieldAlert, 
+  Users, 
+  Zap, 
+  CheckCircle2, 
+  AlertTriangle, 
   ArrowRight,
-  TrendingDown,
   Info,
-  Check
+  Flame,
+  Sun,
+  ShieldCheck,
+  TrendingDown
 } from 'lucide-react';
 import { TransportMode } from '@/lib/types/alternatives';
 import { compareTransportAlternatives, TRANSPORT_FACTORS } from '@/lib/engine/alternatives';
 
+type CategoryTab = 'COMMUTE' | 'HOME_ENERGY' | 'DAILY_HABITS';
+
 export default function AlternativesPage() {
-  const [distanceKm, setDistanceKm] = useState<number>(15);
+  const [activeTab, setActiveTab] = useState<CategoryTab>('COMMUTE');
+  const [distanceKm, setDistanceKm] = useState<number>(14);
+  const [passengers, setPassengers] = useState<number>(1);
   const [baselineMode, setBaselineMode] = useState<TransportMode>('SOLO_PETROL_CAR');
 
   const { baseline, alternatives } = compareTransportAlternatives(distanceKm, baselineMode);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-forest-700 font-semibold text-xs tracking-wider uppercase mb-1">
-            <ArrowLeftRight className="w-4 h-4" />
-            <span>Transport & Lifestyle Comparator</span>
+          <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs tracking-wider uppercase mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Sustainable Alternatives Switcher</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Sustainable Alternatives Switcher
+            Sustainable Alternatives
           </h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Evaluate passenger-kilometre (pkm) emissions, direct travel cost, and the critical trade-off between tailpipe emissions and personal smog exposure.
+          <p className="text-sm text-slate-500 mt-1">
+            Compare daily choices for cleaner air and lower emissions.
           </p>
         </div>
 
-        <Link
-          href="/impact"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-forest-50 text-forest-800 hover:bg-forest-100 font-bold text-xs transition-colors border border-forest-200 shrink-0"
-        >
-          <span>View Mathematical Impact Proof</span>
-          <ArrowRight className="w-4 h-4 text-forest-700" />
-        </Link>
-      </div>
-
-      {/* Trip Configuration Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="flex-1 max-w-xs">
-          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-            One-Way Commute Distance: <strong className="text-forest-700 text-sm">{distanceKm} km</strong>
-          </label>
-          <input
-            type="range"
-            min={2}
-            max={45}
-            step={1}
-            value={distanceKm}
-            onChange={(e) => setDistanceKm(Number(e.target.value))}
-            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-forest-600"
-          />
-          <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
-            <span>2 km</span>
-            <span>20 km</span>
-            <span>45 km</span>
-          </div>
-        </div>
-
-        <div className="flex-1 max-w-sm">
-          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-            Current Commute Mode (Baseline):
-          </label>
-          <select
-            value={baselineMode}
-            onChange={(e) => setBaselineMode(e.target.value as TransportMode)}
-            className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-3 font-semibold focus:outline-none focus:ring-2 focus:ring-forest-500"
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setActiveTab('COMMUTE')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+              activeTab === 'COMMUTE'
+                ? 'bg-[#0a3526] text-white shadow-xs'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
+            }`}
           >
-            <option value="SOLO_PETROL_CAR">Private Petrol Car (Solo)</option>
-            <option value="SOLO_DIESEL_CAR">Private Diesel Car (Solo)</option>
-            <option value="MOTORCYCLE_125CC">Two-Wheeler (Motorcycle 125cc)</option>
-          </select>
+            <Car className="w-3.5 h-3.5" />
+            <span>Commute</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('HOME_ENERGY')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+              activeTab === 'HOME_ENERGY'
+                ? 'bg-[#0a3526] text-white shadow-xs'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>Home &amp; Energy</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('DAILY_HABITS')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+              activeTab === 'DAILY_HABITS'
+                ? 'bg-[#0a3526] text-white shadow-xs'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Daily Habits</span>
+          </button>
         </div>
       </div>
 
-      {/* Baseline Mode Card */}
-      <div className="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-            Current Baseline Commute
-          </span>
-          <h2 className="text-xl font-bold text-white mb-1">{baseline.name}</h2>
-          <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-            {baseline.exposureVsEmissionsTruth}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 shrink-0 text-center">
-          <div className="p-3 rounded-xl bg-slate-800 border border-slate-700">
-            <span className="block text-[10px] uppercase text-slate-400 font-bold">Cost</span>
-            <span className="text-lg font-black text-white">₹{baseline.totalCostInr}</span>
-          </div>
-          <div className="p-3 rounded-xl bg-slate-800 border border-slate-700">
-            <span className="block text-[10px] uppercase text-slate-400 font-bold">Duration</span>
-            <span className="text-lg font-black text-white">{baseline.durationMinutes}m</span>
-          </div>
-          <div className="p-3 rounded-xl bg-slate-800 border border-slate-700">
-            <span className="block text-[10px] uppercase text-slate-400 font-bold">CO₂e</span>
-            <span className="text-lg font-black text-amber-400">{baseline.co2eKg} kg</span>
-          </div>
-          <div className="p-3 rounded-xl bg-slate-800 border border-slate-700">
-            <span className="block text-[10px] uppercase text-slate-400 font-bold">Tailpipe PM</span>
-            <span className="text-lg font-black text-rose-400">{baseline.tailpipePm25Grams} g</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Alternatives Comparison Grid */}
-      <div>
-        <h2 className="text-lg font-bold text-slate-900 mb-4">
-          Compare Available Commute Alternatives ({distanceKm} km single trip)
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {alternatives.map((alt) => {
-            const co2Saved = Number((baseline.co2eKg - alt.co2eKg).toFixed(2));
-            const costDiff = baseline.totalCostInr - alt.totalCostInr;
-            const isCleaner = co2Saved > 0;
-
-            return (
-              <div
-                key={alt.mode}
-                className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between hover:border-forest-300 transition-all"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase ${
-                      alt.exposureRiskLevel === 'LOW'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : alt.exposureRiskLevel === 'MODERATE'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-rose-100 text-rose-800'
-                    }`}>
-                      {alt.exposureRiskLevel} Roadside Exposure
-                    </span>
-                    <span className="text-xs font-bold text-slate-500">
-                      Score: {alt.practicalityScore}/10
-                    </span>
-                  </div>
-
-                  <h3 className="text-base font-bold text-slate-900 mb-1">{alt.name}</h3>
-                  <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    {alt.exposureVsEmissionsTruth}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs mb-4">
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Estimated Cost</span>
-                      <strong className="text-slate-900 font-black">₹{alt.totalCostInr}</strong>
-                      <span className="text-[10px] text-forest-700 block font-semibold">
-                        {costDiff > 0 ? `Saves ₹${costDiff}` : `+₹${Math.abs(costDiff)}`}
-                      </span>
-                    </div>
-
-                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                      <span className="text-[10px] text-slate-400 block font-bold uppercase">Travel Time</span>
-                      <strong className="text-slate-900 font-black">{alt.durationMinutes} mins</strong>
-                      <span className="text-[10px] text-slate-500 block">
-                        at {TRANSPORT_FACTORS[alt.mode].averageSpeedKmph} km/h
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-bold">CO₂e Difference</span>
-                    <span className={`font-black ${isCleaner ? 'text-forest-700' : 'text-slate-700'}`}>
-                      {isCleaner ? `Avoids ${co2Saved} kg` : `+${Math.abs(co2Saved)} kg`}
-                    </span>
-                  </div>
-
-                  <Link
-                    href={`/impact?mode=${alt.mode}&dist=${distanceKm}`}
-                    className="text-forest-700 hover:text-forest-800 font-bold flex items-center gap-1 text-xs"
-                  >
-                    <span>View Proof</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+      {/* Tab 1: Commute Comparison */}
+      {activeTab === 'COMMUTE' && (
+        <div className="space-y-6">
+          {/* Commute Inputs Bar */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* Distance Slider (5 cols) */}
+            <div className="md:col-span-5">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  One-Way Distance
+                </span>
+                <span className="text-sm font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  {distanceKm} km
+                </span>
               </div>
-            );
-          })}
-        </div>
-      </div>
+              <input
+                type="range"
+                min={2}
+                max={40}
+                step={1}
+                value={distanceKm}
+                onChange={(e) => setDistanceKm(Number(e.target.value))}
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0a3526]"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
+                <span>2 km</span>
+                <span>20 km</span>
+                <span>40 km</span>
+              </div>
+            </div>
 
-      {/* Mandatory Scientific Honesty Panel: Exposure vs Emissions */}
-      <div className="p-6 bg-amber-50/70 border border-amber-300 rounded-2xl shadow-xs">
-        <div className="flex items-start gap-3">
-          <ShieldAlert className="w-6 h-6 text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-2">
-            <h3 className="text-sm font-extrabold text-amber-950 uppercase tracking-wide">
-              The Scientific Exposure vs. Emissions Reality (Crucial Medical Guidance)
-            </h3>
-            <p className="text-xs text-amber-900 leading-relaxed">
-              <strong>Never assume that lower emissions equals lower personal smog exposure.</strong> While walking or cycling produces zero vehicle emissions, physical aerobic exertion substantially increases respiratory minute ventilation (inhaled air volume per minute) compared to resting passengers.
-            </p>
-            <p className="text-xs text-amber-900 leading-relaxed">
-              Walking along congested diesel corridors during peak winter smog leads to elevated particulate intake unless protected by an N95 respirator. Conversely, riding an electrified rapid transit system (like the Delhi Metro) combines high per-passenger carbon efficiency with a filtered, enclosed cabin that isolates commuters from toxic road-level exhaust wakes.
-            </p>
+            {/* Baseline Mode (4 cols) */}
+            <div className="md:col-span-4">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Current Commute Mode
+              </label>
+              <select
+                value={baselineMode}
+                onChange={(e) => setBaselineMode(e.target.value as TransportMode)}
+                className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl p-2.5 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600"
+              >
+                <option value="SOLO_PETROL_CAR">Private Car (Petrol)</option>
+                <option value="SOLO_DIESEL_CAR">Private Car (Diesel)</option>
+                <option value="MOTORCYCLE_125CC">Two-Wheeler (Motorcycle 125cc)</option>
+              </select>
+            </div>
+
+            {/* Passengers Counter (3 cols) */}
+            <div className="md:col-span-3">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Passengers
+              </label>
+              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-1.5 justify-between">
+                <button
+                  type="button"
+                  onClick={() => setPassengers(Math.max(1, passengers - 1))}
+                  className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-100 flex items-center justify-center transition-colors"
+                >
+                  -
+                </button>
+                <span className="text-xs font-extrabold text-slate-800">{passengers}</span>
+                <button
+                  type="button"
+                  onClick={() => setPassengers(Math.min(5, passengers + 1))}
+                  className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-100 flex items-center justify-center transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Container */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  Compare Alternatives (per day, round-trip)
+                </h3>
+                <span className="text-xs text-slate-400">
+                  Calculated for {distanceKm * 2} km total daily commute based on ARAI emission factors &amp; CEA grid factor
+                </span>
+              </div>
+              <Link
+                href="/impact"
+                className="text-xs font-bold text-emerald-800 hover:text-emerald-900 flex items-center gap-1 self-start sm:self-auto"
+              >
+                <span>Full Mathematical Proof</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Responsive Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="py-3 px-3">Mode</th>
+                    <th className="py-3 px-3">Travel Time</th>
+                    <th className="py-3 px-3">Cost (₹/day)</th>
+                    <th className="py-3 px-3">Local PM₂.₅ (g/day)</th>
+                    <th className="py-3 px-3">CO₂e (kg/day)</th>
+                    <th className="py-3 px-3">Exposure Risk</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {/* Current Mode Row */}
+                  <tr className="bg-slate-50/80 font-medium">
+                    <td className="py-3.5 px-3">
+                      <div className="flex items-center gap-2">
+                        <Car className="w-4 h-4 text-slate-700" />
+                        <span className="font-bold text-slate-900">
+                          {baseline.name} <span className="text-[10px] text-slate-400 font-normal">(Current)</span>
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3 text-slate-700">{baseline.durationMinutes * 2} min</td>
+                    <td className="py-3.5 px-3 text-slate-900 font-bold">₹{baseline.totalCostInr * 2}</td>
+                    <td className="py-3.5 px-3 text-rose-600 font-bold">{(baseline.tailpipePm25Grams * 2).toFixed(2)}</td>
+                    <td className="py-3.5 px-3 text-amber-700 font-bold">{(baseline.co2eKg * 2).toFixed(2)}</td>
+                    <td className="py-3.5 px-3">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800 uppercase">
+                        High (Cabin Leakage)
+                      </span>
+                    </td>
+                  </tr>
+
+                  {/* Alternative Rows */}
+                  {alternatives.map((alt) => {
+                    const roundTripCost = alt.totalCostInr * 2;
+                    const roundTripPm = (alt.tailpipePm25Grams * 2).toFixed(2);
+                    const roundTripCo2 = (alt.co2eKg * 2).toFixed(2);
+                    const roundTripTime = alt.durationMinutes * 2;
+
+                    return (
+                      <tr key={alt.mode} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3.5 px-3">
+                          <div className="flex items-center gap-2">
+                            {alt.mode.includes('METRO') ? (
+                              <Train className="w-4 h-4 text-emerald-600" />
+                            ) : alt.mode.includes('BUS') ? (
+                              <Bus className="w-4 h-4 text-blue-600" />
+                            ) : alt.mode.includes('CYCLE') ? (
+                              <Bike className="w-4 h-4 text-orange-600" />
+                            ) : (
+                              <Users className="w-4 h-4 text-indigo-600" />
+                            )}
+                            <span className="font-bold text-slate-800">{alt.name}</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-3 text-slate-600">{roundTripTime} min</td>
+                        <td className="py-3.5 px-3 font-semibold text-slate-800">₹{roundTripCost}</td>
+                        <td className="py-3.5 px-3 font-semibold text-emerald-700">{roundTripPm}</td>
+                        <td className="py-3.5 px-3 font-semibold text-emerald-700">{roundTripCo2}</td>
+                        <td className="py-3.5 px-3">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                            alt.exposureRiskLevel === 'LOW'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : alt.exposureRiskLevel === 'MODERATE'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-rose-100 text-rose-800'
+                          }`}>
+                            {alt.exposureRiskLevel}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Exposure vs Emissions Honesty Notice */}
+            <div className="mt-5 p-3.5 bg-emerald-50/70 border border-emerald-200/60 rounded-2xl text-xs text-emerald-950 flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+              <div>
+                <strong>*Exposure vs. Emissions Honesty:</strong> While walking and cycling have zero tailpipe emissions, active physical exertion increases your minute ventilation (breathing rate) by 2-4× directly in roadside exhaust plumes. During severe winter smog, taking electrified mass transit (Metro or Electric Bus) is the safest choice to protect both your lungs and urban air.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Tab 2: Home & Energy */}
+      {activeTab === 'HOME_ENERGY' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100 text-orange-600 flex items-center justify-center mb-3">
+                <Flame className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">
+                Induction Cooktop vs. LPG Gas
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                LPG combustion releases carbon monoxide and unburnt volatile organic compounds inside closed winter apartments. Induction electric cooking eliminates all indoor combustion byproducts.
+              </p>
+              <div className="p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 space-y-1">
+                <div>• Zero indoor combustion exhaust</div>
+                <div>• Up to 84% thermal efficiency (vs ~40% for gas)</div>
+              </div>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-700">
+              Immediate indoor air quality upgrade
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mb-3">
+                <Zap className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">
+                BEE 5-Star BLDC Ceiling Fans
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                Replacing conventional 75W induction ceiling fans with 28W BLDC fans saves ~150 kWh per fan annually. At India&apos;s CEA emission factor (0.716 kg CO₂/kWh), this prevents 107 kg of CO₂e per fan every year.
+              </p>
+              <div className="p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 space-y-1">
+                <div>• 62% reduction in electricity consumption</div>
+                <div>• Payback within 14-18 months of daily use</div>
+              </div>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-700">
+              Low-cost household transition
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mb-3">
+                <Sun className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">
+                Rooftop Solar (Net Metering)
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                A 3 kW rooftop solar array generates ~4,200 units annually in North/Central India, directly displacing grid thermal power and abating over 3.0 metric tonnes of CO₂e every year.
+              </p>
+              <div className="p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 space-y-1">
+                <div>• Generates ~12-14 kWh/day</div>
+                <div>• Covered under PM Surya Ghar Muft Bijli Yojana</div>
+              </div>
+            </div>
+            <div className="mt-5 pt-3 border-t border-slate-100 text-xs font-bold text-emerald-700">
+              High-impact renewable generation
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 3: Daily Habits */}
+      {activeTab === 'DAILY_HABITS' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Engine Idling Switch-Off
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Idling for over 10 seconds burns more fuel than restarting the engine. Turning off your vehicle at traffic signals with over 15 seconds remaining saves ~15-20% fuel in city commutes and stops toxic hot exhaust plumes at breathing height.
+            </p>
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs font-semibold text-emerald-900">
+              Impact: ~45 kg CO₂e saved per car/year
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Consolidated E-Commerce Orders
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Selecting &quot;group my deliveries into one shipment&quot; reduces multiple delivery scooter/van trips into your neighborhood. Last-mile two-wheeler delivery trips emit disproportionate VOCs and PM during cold starts.
+            </p>
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs font-semibold text-emerald-900">
+              Impact: ~60% reduction in delivery trip emissions
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 mb-2">
+              Zero Open Waste &amp; Leaves Burning
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Biomass and garden leaf burning creates dense smoldering plumes packed with polycyclic aromatic hydrocarbons (PAHs) and dioxins right near ground level where thermal inversion traps them.
+            </p>
+            <div className="p-3 bg-emerald-50 rounded-xl text-xs font-semibold text-emerald-900">
+              Impact: Society composting saves neighborhood lungs
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
