@@ -70,7 +70,7 @@ BreatheWise AI explicitly decouples:
   - Carpool (Petrol Car, 4 passengers): $35.5\text{ g CO}_2\text{e/pkm}$
   - Two-Wheeler (Motorcycle, 1 rider): $48\text{ g CO}_2\text{e/pkm}$
   - Delhi Metro (DMRC Grid Baseline): $26\text{ g CO}_2\text{e/pkm}$
-    *(Derived from Central Electricity Authority CO2 Baseline Database v19, weighted grid factor $0.716\text{ kg CO}_2\text{/kWh}$ and high commuter load factors)*
+    *(Derived from Central Electricity Authority CO2 Baseline Database v19, weighted grid factor $0.716\text{ kg CO}_2\text{/kWh}$ [FY 2022-23] and CEA Annual Report 2024-25 reference of $0.727\text{ kg CO}_2\text{/kWh}$ [FY 2023-24] allocated across high commuter load factors)*
   - Electric Bus (Charging from Indian Grid): $32\text{ g CO}_2\text{e/pkm}$
   - Walking / Cycling: $0\text{ g CO}_2\text{e/pkm}$
 

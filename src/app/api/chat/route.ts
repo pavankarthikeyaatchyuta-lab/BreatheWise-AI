@@ -14,8 +14,26 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const message = body.message || '';
-    const aqiState: AirQualityState = body.aqiState || getDelhiDemoState();
-    const profile: HouseholdProfile = body.profile || DEFAULT_HOUSEHOLD_PROFILE;
+    
+    // Safely merge with defaults if partial structures are sent
+    const defaultState = getDelhiDemoState();
+    const aqiState: AirQualityState = {
+      ...defaultState,
+      ...(body.aqiState || {}),
+      current: {
+        ...defaultState.current,
+        ...(body.aqiState?.current || {}),
+      },
+      provenance: {
+        ...defaultState.provenance,
+        ...(body.aqiState?.provenance || {}),
+      },
+    };
+    
+    const profile: HouseholdProfile = {
+      ...DEFAULT_HOUSEHOLD_PROFILE,
+      ...(body.profile || {}),
+    };
 
     const response = await askGroundedAssistant(message, aqiState, profile);
     return NextResponse.json(response);

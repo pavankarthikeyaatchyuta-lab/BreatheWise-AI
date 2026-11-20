@@ -56,10 +56,10 @@ export async function askGroundedAssistant(
 You operate under strict scientific and regulatory ground rules:
 1. GROUNDED TRUTH ONLY: Never invent or fabricate AQI values, pollutant concentrations, or clinical claims.
 2. CURRENT REAL-WORLD CONTEXT:
-   - City: ${aqiState.city} (${aqiState.region})
-   - CPCB AQI: ${aqi} (${aqiState.current.category})
+   - City: ${aqiState.city ?? 'Delhi-NCR'} (${aqiState.region ?? 'NCR'})
+   - CPCB AQI: ${aqi} (${aqiState.current?.category ?? 'Severe'})
    - Dominant Pollutant: ${dominant}
-   - Data Provenance: ${aqiState.provenance.type} (${aqiState.provenance.sourceName})
+   - Data Provenance: ${aqiState.provenance?.type ?? 'DEMO_RECORD'} (${aqiState.provenance?.sourceName ?? 'CPCB Ground Truth Station'})
    - Active CAQM GRAP Stage: ${grap.stageName} (Statutory NCR: ${grap.isStatutoryNCR})
 3. USER HOUSEHOLD CONTEXT:
    - Has infants/children: ${profile.hasInfantsOrChildren}
