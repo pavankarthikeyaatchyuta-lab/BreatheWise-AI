@@ -27,12 +27,12 @@ import {
 } from 'lucide-react';
 import { HouseholdProfile, DEFAULT_HOUSEHOLD_PROFILE } from '@/lib/types/user';
 import { generateDailyPlan } from '@/lib/engine/planner-engine';
-import { getDelhiDemoState } from '@/lib/aqi/demo-data';
+import { useCity } from '@/context/CityContext';
 
 export default function PlannerPage() {
+  const { aqiData: aqiState } = useCity();
   const [profile, setProfile] = useState<HouseholdProfile>(DEFAULT_HOUSEHOLD_PROFILE);
   const [showConfig, setShowConfig] = useState<boolean>(false);
-  const aqiState = getDelhiDemoState();
   const plan = generateDailyPlan(profile, aqiState);
 
   // Formatted date

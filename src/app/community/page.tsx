@@ -18,9 +18,10 @@ import {
   X
 } from 'lucide-react';
 import { evaluateGRAPStage } from '@/lib/engine/grap-engine';
-import { getDelhiDemoState } from '@/lib/aqi/demo-data';
+import { useCity } from '@/context/CityContext';
 
 export default function CommunityPage() {
+  const { aqiData: aqiState } = useCity();
   const [copied, setCopied] = useState<boolean>(false);
   const [showOrderModal, setShowOrderModal] = useState<boolean>(false);
   const [checkedActions, setCheckedActions] = useState<Record<string, boolean>>({
@@ -31,14 +32,13 @@ export default function CommunityPage() {
     heating: true,
   });
 
-  const aqiState = getDelhiDemoState();
-  const aqi = aqiState.current.aqi ?? 360; // Stage II Very Poor reference
+  const aqi = aqiState.current.aqi ?? 176;
   const grap = evaluateGRAPStage(aqi, aqiState.isNCR);
 
   const sampleBulletinText = `📢 BREATHEWISE AI COMMUNITY ADVISORY
 Date: ${new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}
-Location: ${aqiState.city} (Delhi-NCR)
-Status: AQI ${aqi} • CAQM GRAP Stage II (Very Poor)
+Location: ${aqiState.city} (${aqiState.isNCR ? 'Delhi-NCR Statutory' : 'Regional Advisory'})
+Status: AQI ${aqi} • ${grap.stageName}
 
 🚨 IMMEDIATE COMMUNITY & SCHOOL ACTIONS:
 1. SCHOOLS: Shift morning assemblies and outdoor sports indoors. Keep classroom windows closed with indoor air cleaning.

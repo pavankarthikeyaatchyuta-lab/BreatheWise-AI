@@ -19,14 +19,14 @@ import {
   X
 } from 'lucide-react';
 import { evaluateIndoorGuidance } from '@/lib/engine/indoor-engine';
-import { getDelhiDemoState } from '@/lib/aqi/demo-data';
+import { useCity } from '@/context/CityContext';
 
 type CategoryFilter = 'ALL' | 'VENTILATION' | 'COOKING' | 'CLEANING' | 'DIY_FILTER';
 
 export default function IndoorCoachPage() {
-  const aqiState = getDelhiDemoState();
-  const currentPm25 = aqiState.current.pollutants.pm25?.value ?? 312;
-  const currentAqi = aqiState.current.aqi ?? 450;
+  const { aqiData: aqiState } = useCity();
+  const currentPm25 = aqiState.current.pollutants.pm25?.value ?? 102;
+  const currentAqi = aqiState.current.aqi ?? 176;
 
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('ALL');
   const [hasPartition, setHasPartition] = useState(true);

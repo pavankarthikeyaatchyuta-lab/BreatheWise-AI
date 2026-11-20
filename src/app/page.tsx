@@ -23,38 +23,17 @@ import {
   Droplets
 } from 'lucide-react';
 import { AirQualityState, PollutantKey } from '@/lib/types/aqi';
-import { getDelhiDemoState } from '@/lib/aqi/demo-data';
 import { evaluateGRAPStage } from '@/lib/engine/grap-engine';
+import { useCity } from '@/context/CityContext';
 
 export default function DashboardPage() {
-  const [selectedCity, setSelectedCity] = useState<string>('Delhi-NCR');
-  const [aqiData, setAqiData] = useState<AirQualityState>(getDelhiDemoState());
-  const [loading, setLoading] = useState<boolean>(false);
+  const { selectedCity, setSelectedCity, aqiData, loading } = useCity();
   const [locationNotice, setLocationNotice] = useState<string | null>(null);
-
-  // Fetch AQI data whenever city changes
-  useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/aqi?city=${encodeURIComponent(selectedCity)}`);
-        if (res.ok) {
-          const json: AirQualityState = await res.json();
-          setAqiData(json);
-        }
-      } catch {
-        // Fallback remains active
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [selectedCity]);
 
   const isOfficialValid = aqiData.current.validation?.isValidOfficial ?? true;
   const aqi = aqiData.current.aqi;
   const category = aqiData.current.category || (isOfficialValid ? 'Severe' : 'Insufficient Data');
-  const dominant = aqiData.current.dominantPollutantName || 'Evaluating';
+  const dominant = aqiData.current.dominantPollutantName || 'PM2.5';
   const grap = evaluateGRAPStage(aqi, aqiData.isNCR);
 
   // Gradient badge for current AQI based on category

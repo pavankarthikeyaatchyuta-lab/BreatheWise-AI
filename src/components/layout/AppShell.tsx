@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { AppHeader } from './AppHeader';
 import { Footer } from './Footer';
+import { CityProvider, useCity } from '@/context/CityContext';
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function AppShellInner({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState('Delhi-NCR');
+  const { selectedCity, setSelectedCity } = useCity();
 
   return (
     <div className="min-h-screen flex bg-[#f5f8f6] text-slate-900 font-sans antialiased">
@@ -43,5 +44,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Footer />
       </div>
     </div>
+  );
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <CityProvider>
+      <AppShellInner>{children}</AppShellInner>
+    </CityProvider>
   );
 }

@@ -16,9 +16,9 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { AIAssistantResponse } from '@/lib/ai/schemas';
-import { getDelhiDemoState } from '@/lib/aqi/demo-data';
 import { DEFAULT_HOUSEHOLD_PROFILE } from '@/lib/types/user';
 import { evaluateGRAPStage } from '@/lib/engine/grap-engine';
+import { useCity } from '@/context/CityContext';
 
 interface ChatMessage {
   id: string;
@@ -38,7 +38,7 @@ const QUICK_PROMPT_CHIPS = [
 ];
 
 export default function AssistantPage() {
-  const aqiState = getDelhiDemoState();
+  const { aqiData: aqiState } = useCity();
   const aqi = aqiState.current.aqi ?? 176;
   const grap = evaluateGRAPStage(aqi, aqiState.isNCR);
   const dominant = aqiState.current.dominantPollutantName ?? 'PM2.5';
