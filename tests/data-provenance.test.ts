@@ -104,4 +104,11 @@ describe('Data Provenance & Open-Meteo Parser Suite', () => {
     expect(parsed.forecast24h).toEqual([]);
     expect(parsed.provenance.monitoredHoursAvailable).toBe(0);
   });
+
+  it('ensures fallback and reference records are strictly badged as DEMO_RECORD and never as live MEASURED_STATION', () => {
+    const delhi = getDelhiDemoState();
+    expect(delhi.provenance.type).toBe('DEMO_RECORD');
+    expect(delhi.provenance.type).not.toBe('MEASURED_STATION');
+    expect(delhi.provenance.sourceName).toContain('Historical Telemetry');
+  });
 });

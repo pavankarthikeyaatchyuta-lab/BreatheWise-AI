@@ -31,8 +31,8 @@
    - URL: `https://caqm.nic.in/`
 
 3. **Central Electricity Authority (CEA) Baseline Database:**
-   - CEA Baseline Carbon Dioxide Emissions Database Version 19.0 (FY 2022–23): $0.716\text{ kg CO}_2/\text{kWh}$ (User Grid Baseline).
-   - CEA Annual Report 2024–25 (FY 2023–24): $0.727\text{ tCO}_2/\text{MWh}$ (Transparently documented in modal proof).
+   - CEA Baseline Carbon Dioxide Emissions Database Version 22.0 (August 2026, FY 2025–26): $0.675\text{ tCO}_2/\text{MWh}$ ($0.675\text{ kg CO}_2/\text{kWh}$ Weighted Average including renewable generation and captive power injection, adjusted for cross-border electricity transfers).
+   - Historical benchmarks: Version 19.0 (FY 2022–23, $0.716\text{ kg CO}_2/\text{kWh}$) and Annual Report (FY 2023–24, $0.727\text{ tCO}_2/\text{MWh}$).
    - URL: `https://cea.nic.in/`
 
 4. **Automotive Research Association of India (ARAI) Emission Factors:**

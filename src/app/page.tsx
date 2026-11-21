@@ -182,11 +182,17 @@ export default function DashboardPage() {
                   Current Air Quality (NAQI)
                 </h2>
                 <span className="text-[11px] text-slate-400 font-medium">
-                  CPCB Method • {aqiData.provenance.type === 'MEASURED_STATION' ? 'Measured (Station)' : 'Atmospheric Model'}
+                  CPCB Method • {
+                    aqiData.provenance.type === 'MEASURED_STATION'
+                      ? 'Measured (Station Sensor)'
+                      : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
+                      ? 'Atmospheric Model (~45 km)'
+                      : 'Historical Reference (Demo Record)'
+                  }
                 </span>
               </div>
               <span className="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
-                Updated just now
+                {aqiData.provenance.type === 'DEMO_RECORD' ? 'Historical Telemetry (Demo)' : 'Updated just now'}
               </span>
             </div>
 

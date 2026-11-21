@@ -32,7 +32,7 @@ const CITY_TRANSIT_NAMES: Record<string, string> = {
   'Pune': 'Pune Metro Rail',
   'Chennai': 'Chennai Metro Rail (CMRL)',
   'Lucknow': 'Lucknow Metro (UPMRC)',
-  'Patna': 'Patna Electric Rapid Transit',
+  'Patna': 'Patna Metro Rail (Priority Section: Malahi Pakri – ISBT; Under Construction)',
 };
 
 type CategoryTab = 'COMMUTE' | 'HOME_ENERGY' | 'DAILY_HABITS';
@@ -300,6 +300,16 @@ export default function AlternativesPage() {
             <div className="text-[11px] text-slate-400 font-medium mt-2">
               *Lower emissions, but avoid during high-AQI hours and heavy traffic.
             </div>
+
+            {/* Patna Metro Status Advisory */}
+            {selectedCity === 'Patna' && (
+              <div className="mt-3 p-3 bg-amber-50 border border-amber-200/80 rounded-2xl text-xs text-amber-900 flex items-start gap-2">
+                <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                <div>
+                  <strong>Patna Metro Rail Operational Notice:</strong> Only the designated priority section (Malahi Pakri – New ISBT) is under active phased commissioning. The full city-wide network (Corridors 1 &amp; 2) remains under construction; verify station-level operational status before planning your commute.
+                </div>
+              </div>
+            )}
 
             {/* Exposure vs Emissions Honesty Notice */}
             <div className="mt-5 p-3.5 bg-emerald-50/70 border border-emerald-200/60 rounded-2xl text-xs text-emerald-950 flex items-start gap-2.5">

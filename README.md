@@ -160,7 +160,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 6. Scientific References & Data Sources
 - **Central Pollution Control Board (CPCB)**: *National Air Quality Index (NAQI) Breakpoints & Technical Guidelines*, MoEFCC, Govt. of India.
-- **Central Electricity Authority (CEA)**: *CO₂ Baseline Database for the Indian Power Sector*, Version 19.0 (June 2024).
+- **Central Electricity Authority (CEA)**: *CO₂ Baseline Database for the Indian Power Sector*, Version 22.0 (August 2026, Weighted Average for FY 2025–26: 0.675 tCO₂/MWh).
 - **Automotive Research Association of India (ARAI)**: *Fleet Emission Factors for Indian Transport Sector*.
 - **Commission for Air Quality Management (CAQM)**: *Statutory Graded Response Action Plan (GRAP) for NCR and Adjoining Areas*.
 - **Open-Meteo**: *Copernicus Atmosphere Monitoring Service (CAMS) & NOAA Global Forecast System*.
