@@ -106,16 +106,51 @@ export default function DashboardPage() {
   const firstPoint = chartPoints[0] || { x: 32, y: 145 };
   const areaPath = curvePath ? `${curvePath} L ${lastPoint.x.toFixed(1)},150 L ${firstPoint.x.toFixed(1)},150 Z` : '';
 
-  // Find morning peak (first half) and evening peak (second half)
-  const midIdx = Math.floor(chartPoints.length / 2);
-  let morningPeak = chartPoints[0];
-  for (let i = 0; i <= midIdx; i++) {
-    if (chartPoints[i].pm25 > morningPeak.pm25) morningPeak = chartPoints[i];
-  }
-  let eveningPeak = chartPoints[midIdx] || chartPoints[0];
-  for (let i = midIdx; i < chartPoints.length; i++) {
-    if (chartPoints[i].pm25 > eveningPeak.pm25) eveningPeak = chartPoints[i];
-  }
+  // Find morning peak (between 6:00 and 11:00) and evening peak (between 17:00 and 22:00)
+  const morningCandidates = chartPoints.filter((p) => {
+    const hr = parseInt(p.time.split(':')[0], 10);
+    return hr >= 6 && hr <= 11;
+  });
+  const morningPeak =
+    morningCandidates.length > 0
+      ? morningCandidates.reduce((max, p) => (p.pm25 > max.pm25 ? p : max), morningCandidates[0])
+      : null;
+
+  const eveningCandidates = chartPoints.filter((p) => {
+    const hr = parseInt(p.time.split(':')[0], 10);
+    return hr >= 17 && hr <= 22;
+  });
+  const eveningPeak =
+    eveningCandidates.length > 0
+      ? eveningCandidates.reduce((max, p) => (p.pm25 > max.pm25 ? p : max), eveningCandidates[0])
+      : null;
+
+  // Dynamic recommendations based on current AQI category
+  const dynamicRecommendations = React.useMemo(() => {
+    if (category === 'Good' || category === 'Satisfactory') {
+      return [
+        { icon: Home, title: 'Ideal for outdoor walks and children outdoor play' },
+        { icon: ShieldCheck, title: 'No mask required for general population' },
+        { icon: Wind, title: 'Open windows for natural fresh air ventilation' },
+        { icon: Car, title: 'Great day to walk, cycle, or use public transit' },
+      ];
+    }
+    if (category === 'Moderate') {
+      return [
+        { icon: Home, title: 'Prefer indoor activities (morning & late evening)' },
+        { icon: ShieldCheck, title: 'Sensitive groups should use a mask outdoors' },
+        { icon: Wind, title: 'Keep windows closed (AQI is elevated)' },
+        { icon: Car, title: 'Choose public transport or carpool' },
+      ];
+    }
+    // Poor, Very Poor, Severe
+    return [
+      { icon: Home, title: 'Prefer indoor activities (morning & late evening)' },
+      { icon: ShieldCheck, title: "Use a mask (N95/KN95) if you're outdoors" },
+      { icon: Wind, title: 'Keep windows closed (AQI is high)' },
+      { icon: Car, title: 'Choose public transport or carpool' },
+    ];
+  }, [category]);
 
   // Dynamic stroke color based on peak severity
   const strokeColor =
@@ -178,12 +213,15 @@ export default function DashboardPage() {
               </div>
 
               {/* Dominant Pollutant White Box (matching reference image) */}
-              <div className="hidden sm:flex flex-col items-center justify-center px-4 py-3 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 text-center shrink-0 z-10 shadow-xs">
+              <div className="hidden sm:flex flex-col items-center justify-center px-4 py-2.5 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 text-center shrink-0 z-10 shadow-xs min-w-[130px] max-w-[170px]">
                 <span className="text-[10px] uppercase font-extrabold text-white/80 tracking-wider block">
                   Dominant Pollutant
                 </span>
-                <span className="text-xl font-black text-white block mt-0.5">
-                  {isOfficialValid ? dominant : '—'}
+                <span className="text-lg sm:text-xl font-black text-white block mt-0.5 leading-tight">
+                  {aqiData.current.dominantPollutant?.toUpperCase() || (dominant.startsWith('PM2.5') ? 'PM2.5' : dominant)}
+                </span>
+                <span className="text-[10px] text-white/80 font-medium block truncate max-w-[150px]">
+                  {dominant.includes('(') ? dominant.split('(')[1].replace(')', '') : 'Criteria Particulate'}
                 </span>
               </div>
 
@@ -234,35 +272,19 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* 4 Actionable Items (Reference Style with green icons) */}
+            {/* 4 Actionable Items (Dynamically aligned with AQI category) */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Home className="w-4 h-4" />
-                </div>
-                <strong className="text-slate-800 text-xs font-bold">Prefer indoor activities (morning &amp; late evening)</strong>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <strong className="text-slate-800 text-xs font-bold">Use a mask (N95/KN95) if you&apos;re outdoors</strong>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Wind className="w-4 h-4" />
-                </div>
-                <strong className="text-slate-800 text-xs font-bold">Keep windows closed (AQI is high)</strong>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Car className="w-4 h-4" />
-                </div>
-                <strong className="text-slate-800 text-xs font-bold">Choose public transport or carpool</strong>
-              </div>
+              {dynamicRecommendations.map((rec, i) => {
+                const Icon = rec.icon;
+                return (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <strong className="text-slate-800 text-xs font-bold leading-snug">{rec.title}</strong>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -384,16 +406,16 @@ export default function DashboardPage() {
                     />
                   )}
 
-                  {/* Morning Spike Badge Floating Above Morning Peak */}
-                  {morningPeak && (
+                  {/* Morning Spike Badge Floating Above Morning Peak (only when real spike occurs) */}
+                  {morningPeak && morningPeak.pm25 >= 80 && morningPeak.pm25 > lowForecast.pm25 * 1.2 && (
                     <g transform={`translate(${Math.max(morningPeak.x - 35, 32)}, ${Math.max(morningPeak.y - 24, 6)})`}>
                       <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
                       <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Morning Spike</text>
                     </g>
                   )}
 
-                  {/* Evening Spike Badge Floating Above Evening Peak */}
-                  {eveningPeak && (
+                  {/* Evening Spike Badge Floating Above Evening Peak (only when real spike occurs) */}
+                  {eveningPeak && eveningPeak.pm25 >= 80 && eveningPeak.pm25 > lowForecast.pm25 * 1.2 && (
                     <g transform={`translate(${Math.min(eveningPeak.x - 35, 500)}, ${Math.max(eveningPeak.y - 24, 6)})`}>
                       <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
                       <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Evening Spike</text>
