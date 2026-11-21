@@ -62,41 +62,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Top Welcome / Location Sub-Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Air Intelligence Command Center • {aqiData.city}</span>
-          </span>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
-              ? `Model: Copernicus CAMS Global (~45 km grid, ~0.4° resolution; 3-hourly underlying model steps interpolated hourly)`
-              : `Station: ${aqiData.provenance.sourceName} • ${aqiData.isNCR ? 'CAQM Statutory Zone' : 'State PCB Framework'}`}
-          </p>
-        </div>
-
-        {/* Live Provenance & Freshness Badge */}
-        <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
-            aqiData.provenance.type === 'MEASURED_STATION'
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-              : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
-              ? 'bg-blue-50 text-blue-800 border-blue-200'
-              : 'bg-amber-50 text-amber-800 border-amber-200'
-          }`}>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>
-              {aqiData.provenance.type === 'MEASURED_STATION'
-                ? 'Measured Station Data'
-                : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
-                ? 'CAMS Global Model (~45 km)'
-                : 'CPCB Reference Record (Demo)'}
-            </span>
-          </span>
-        </div>
-      </div>
-
       {locationNotice && (
         <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-800 flex items-center gap-2 shadow-xs">
           <Info className="w-4 h-4 text-amber-600 shrink-0" />
@@ -204,55 +169,35 @@ export default function DashboardPage() {
 
             {/* 4 Actionable Items (Reference Style with green icons) */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Home className="w-4 h-4" />
                 </div>
-                <div className="text-xs">
-                  <strong className="text-slate-800 block text-xs font-bold">Prefer indoor activities (morning &amp; late evening)</strong>
-                  <span className="text-[11px] text-slate-500">Thermal inversions concentrate aerosols at ground level.</span>
-                </div>
+                <strong className="text-slate-800 text-xs font-bold">Prefer indoor activities (morning &amp; late evening)</strong>
               </div>
 
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
-                <div className="text-xs">
-                  <strong className="text-slate-800 block text-xs font-bold">Use a mask (N95/KN95) if you&apos;re outdoors</strong>
-                  <span className="text-[11px] text-slate-500">Mandatory certified seal for adult outdoor transit.</span>
-                </div>
+                <strong className="text-slate-800 text-xs font-bold">Use a mask (N95/KN95) if you&apos;re outdoors</strong>
               </div>
 
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Wind className="w-4 h-4" />
                 </div>
-                <div className="text-xs">
-                  <strong className="text-slate-800 block text-xs font-bold">Keep windows closed (AQI is high)</strong>
-                  <span className="text-[11px] text-slate-500">Ventilate only during the midday planetary boundary expansion.</span>
-                </div>
+                <strong className="text-slate-800 text-xs font-bold">Keep windows closed (AQI is high)</strong>
               </div>
 
-              <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Car className="w-4 h-4" />
                 </div>
-                <div className="text-xs">
-                  <strong className="text-slate-800 block text-xs font-bold">Choose public transport or carpool</strong>
-                  <span className="text-[11px] text-slate-500">Rapid rail transit provides HVAC particulate pre-filtration.</span>
-                </div>
+                <strong className="text-slate-800 text-xs font-bold">Choose public transport or carpool</strong>
               </div>
             </div>
           </div>
-
-          <Link
-            href="/assistant"
-            className="mt-4 p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 text-emerald-800 text-xs font-bold transition-colors flex items-center justify-between border border-emerald-200/60"
-          >
-            <span>Ask Gemini AI for Family Advice</span>
-            <ArrowRight className="w-4 h-4 text-emerald-700" />
-          </Link>
         </div>
       </div>
 
@@ -436,100 +381,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
-            <span>Atmospheric boundary layer drops at night, concentrating ground emissions.</span>
-            <Link href="/planner" className="text-emerald-700 font-bold hover:underline shrink-0">
-              Schedule Day Around Low →
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Row 3: Impact Summary Mini-Bar & Regulatory Status (matching reference image) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Impact Today vs Baseline (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-sm font-bold text-slate-800 tracking-tight">
-                Your Estimated Impact (Today vs. Baseline)
-              </h2>
-              <span className="text-[11px] text-slate-400">
-                Transparent passenger-km decoupling based on CEA & ARAI factors
-              </span>
-            </div>
-            <Link href="/impact" className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
-              <span>View Proof</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 text-center">
-              <span className="block text-[10px] font-bold text-blue-700 uppercase tracking-wider mb-1">
-                Exposure Shift
-              </span>
-              <span className="block text-2xl font-black text-blue-950">
-                -2.4 hrs
-              </span>
-              <span className="text-[10px] text-blue-600 font-medium">
-                away from peak smog
-              </span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 text-center">
-              <span className="block text-[10px] font-bold text-emerald-700 uppercase tracking-wider mb-1">
-                Local PM2.5 Avoided
-              </span>
-              <span className="block text-2xl font-black text-emerald-950">
-                -0.36 g
-              </span>
-              <span className="text-[10px] text-emerald-600 font-medium">
-                tailpipe soot saved
-              </span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100 text-center">
-              <span className="block text-[10px] font-bold text-purple-700 uppercase tracking-wider mb-1">
-                CO₂e Reduction
-              </span>
-              <span className="block text-2xl font-black text-purple-950">
-                -1.14 kg
-              </span>
-              <span className="text-[10px] text-purple-600 font-medium">
-                grid-adjusted savings
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* CAQM GRAP Regulatory Mini-Card (5 cols) */}
-        <div className="lg:col-span-5 bg-[#0a3526] text-white rounded-3xl p-6 shadow-xs flex flex-col justify-between border border-[#0d4432] relative overflow-hidden">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">
-                {aqiData.isNCR ? 'Statutory CAQM Status' : 'Regional Advisory Status'}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/80 text-emerald-200 text-[11px] font-semibold border border-emerald-700">
-                {grap.activeStage}
-              </span>
-            </div>
-
-            <h3 className="text-lg font-bold text-white mb-1.5">
-              {grap.stageName}
-            </h3>
-            <p className="text-xs text-emerald-100/80 leading-relaxed mb-4">
-              {grap.summary}
-            </p>
-          </div>
-
-          <Link
-            href="/community"
-            className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors shadow-xs"
-          >
-            <span>School & Community Directives</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </div>

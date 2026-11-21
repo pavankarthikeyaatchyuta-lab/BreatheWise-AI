@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { AirQualityState } from '@/lib/types/aqi';
-import { getDelhiDemoState, DEMO_CITIES } from '@/lib/aqi/demo-data';
+import { getDelhiDemoState, getHyderabadDemoState, DEMO_CITIES } from '@/lib/aqi/demo-data';
 
 interface CityContextType {
   selectedCity: string;
@@ -15,8 +15,8 @@ interface CityContextType {
 const CityContext = createContext<CityContextType | undefined>(undefined);
 
 export function CityProvider({ children }: { children: React.ReactNode }) {
-  const [selectedCity, setSelectedCity] = useState<string>('Delhi-NCR');
-  const [aqiData, setAqiData] = useState<AirQualityState>(getDelhiDemoState());
+  const [selectedCity, setSelectedCity] = useState<string>('Hyderabad');
+  const [aqiData, setAqiData] = useState<AirQualityState>(getHyderabadDemoState());
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchCityData = useCallback(async (city: string) => {

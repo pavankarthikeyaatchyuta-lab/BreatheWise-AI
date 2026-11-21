@@ -40,11 +40,11 @@ export function Sidebar() {
   const { t } = useScenario();
 
   return (
-    <aside className="w-64 bg-[#0a3526] text-white flex flex-col justify-between shrink-0 min-h-screen relative overflow-hidden border-r border-[#0d4432] shadow-xl">
+    <aside className="w-64 bg-[#0a3526] text-white flex flex-col justify-between shrink-0 h-screen relative overflow-hidden border-r border-[#0d4432] shadow-xl">
       {/* Top Section */}
-      <div className="p-6 relative z-10">
+      <div className="p-5 relative z-10">
         {/* Brand Header */}
-        <Link href="/" className="flex items-center gap-3 group mb-8">
+        <Link href="/" className="flex items-center gap-3 group mb-5">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-emerald-950/40 group-hover:scale-105 transition-transform">
             <Leaf className="w-5 h-5 fill-white/20 text-white" />
           </div>
@@ -59,7 +59,7 @@ export function Sidebar() {
         </Link>
 
         {/* Navigation Items */}
-        <nav className="space-y-1.5">
+        <nav className="space-y-1">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -69,7 +69,7 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 relative group',
+                  'flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all duration-150 relative group',
                   isActive
                     ? 'bg-[#188050] text-white font-bold shadow-md shadow-emerald-950/30'
                     : 'text-emerald-100/75 hover:text-white hover:bg-emerald-800/30 font-medium'
@@ -89,10 +89,10 @@ export function Sidebar() {
       </div>
 
       {/* Bottom Section with Settings & Forest Silhouette Graphic */}
-      <div className="relative z-10 p-6 pt-0">
+      <div className="relative z-10 p-5 pt-0">
         <Link
           href="/planner"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-200/70 hover:text-white hover:bg-emerald-800/30 transition-colors mb-4"
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-emerald-200/70 hover:text-white hover:bg-emerald-800/30 transition-colors mb-2"
         >
           <Settings className="w-4 h-4 text-emerald-300/70" />
           <span>Settings</span>

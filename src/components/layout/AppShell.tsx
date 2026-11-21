@@ -12,9 +12,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const { selectedCity, setSelectedCity } = useCity();
 
   return (
-    <div className="min-h-screen flex bg-[#f5f8f6] text-slate-900 font-sans antialiased">
-      {/* Desktop Left Sidebar (hidden on mobile) */}
-      <div className="hidden md:flex shrink-0">
+    <div className="h-screen flex bg-[#f5f8f6] text-slate-900 font-sans antialiased overflow-hidden">
+      {/* Desktop Left Sidebar (fixed to screen height) */}
+      <div className="hidden md:flex shrink-0 h-screen sticky top-0">
         <Sidebar />
       </div>
 
@@ -31,8 +31,8 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Main Content Workspace */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
+      {/* Main Content Workspace (scrolls independently) */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         <AppHeader
           currentCity={selectedCity}
           onCityChange={(city) => setSelectedCity(city)}
