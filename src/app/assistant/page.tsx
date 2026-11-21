@@ -315,18 +315,66 @@ export default function AssistantPage() {
 
         {/* Quick Action Prompt Chips & Input Bar */}
         <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
-          {/* Quick Prompt Chips */}
-          <div className="flex flex-wrap items-center gap-2">
-            {QUICK_PROMPT_CHIPS.map((chip, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleSendMessage(chip)}
-                className="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-all active:scale-95 text-left"
-              >
-                {chip}
-              </button>
-            ))}
+          <div className="flex items-center justify-between gap-4">
+            {/* Quick Prompt Chips */}
+            <div className="flex flex-wrap items-center gap-2 flex-1">
+              {QUICK_PROMPT_CHIPS.map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSendMessage(chip)}
+                  className="px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-all active:scale-95 text-left"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+
+            {/* Friendly Robot Mascot Illustration (matching reference design) */}
+            <div className="hidden lg:flex w-24 h-24 shrink-0 relative items-center justify-center">
+              <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Antenna */}
+                <line x1="60" y1="20" x2="60" y2="10" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+                <circle cx="60" cy="8" r="4" fill="#10b981" />
+                <path d="M60 8 C65 4 70 8 68 12 Z" fill="#22c55e" />
+
+                {/* Robot Head */}
+                <rect x="36" y="20" width="48" height="38" rx="14" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2.5" />
+                {/* Face Visor Screen */}
+                <rect x="42" y="26" width="36" height="22" rx="8" fill="#0f172a" />
+                {/* Friendly Eyes */}
+                <ellipse cx="50" cy="37" rx="3.5" ry="4.5" fill="#38bdf8" />
+                <ellipse cx="70" cy="37" rx="3.5" ry="4.5" fill="#38bdf8" />
+                {/* Eye glints */}
+                <circle cx="49" cy="35" r="1.5" fill="#ffffff" />
+                <circle cx="69" cy="35" r="1.5" fill="#ffffff" />
+
+                {/* Ears / Headphone nubs */}
+                <rect x="30" y="32" width="6" height="14" rx="3" fill="#10b981" />
+                <rect x="84" y="32" width="6" height="14" rx="3" fill="#10b981" />
+
+                {/* Neck */}
+                <rect x="54" y="58" width="12" height="6" rx="2" fill="#94a3b8" />
+
+                {/* Robot Body */}
+                <rect x="38" y="64" width="44" height="42" rx="16" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2.5" />
+                {/* Green Leaf Logo on Chest */}
+                <ellipse cx="60" cy="84" rx="10" ry="12" fill="#dcfce7" />
+                <path d="M60 76 C68 78 68 88 60 92 C52 88 52 78 60 76 Z" fill="#10b981" />
+
+                {/* Left Arm */}
+                <path d="M38 72 C30 76 28 88 32 94" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" />
+                <path d="M38 72 C30 76 28 88 32 94" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" />
+
+                {/* Right Arm (Waving!) */}
+                <path d="M82 72 C92 68 100 52 98 44" stroke="#ffffff" strokeWidth="7" strokeLinecap="round" />
+                <path d="M82 72 C92 68 100 52 98 44" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="98" cy="44" r="5" fill="#10b981" />
+
+                {/* Bottom Shadow */}
+                <ellipse cx="60" cy="112" rx="24" ry="4" fill="#0f172a" opacity="0.1" />
+              </svg>
+            </div>
           </div>
 
           {/* Form Input */}

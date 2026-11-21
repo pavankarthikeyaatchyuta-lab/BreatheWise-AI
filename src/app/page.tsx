@@ -123,26 +123,36 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            {/* Glowing Main AQI Badge Container (as in reference image) */}
-            <div className={`p-6 rounded-2xl bg-gradient-to-r ${activeTheme.bgGrad} text-white shadow-lg shadow-orange-950/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative overflow-hidden`}>
-              <div className="flex items-center gap-4 relative z-10">
-                {/* Cloud icon container */}
-                <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white shrink-0">
-                  <Wind className="w-8 h-8" />
+            {/* Glowing Main AQI Badge Container (matching reference image) */}
+            <div className={`p-6 rounded-3xl bg-gradient-to-r ${activeTheme.bgGrad} text-white shadow-lg shadow-orange-950/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative overflow-hidden`}>
+              <div className="flex items-center gap-5 relative z-10">
+                {/* Cloud/Air icon container */}
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white shrink-0 border border-white/20 shadow-inner">
+                  <Wind className="w-9 h-9" />
                 </div>
                 <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl sm:text-6xl font-black tracking-tight leading-none">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl sm:text-6xl font-black tracking-tight leading-none drop-shadow-xs">
                       {aqi !== null ? aqi : '—'}
                     </span>
-                    <span className="text-lg font-bold text-white/90">
+                    <span className="text-xl font-extrabold text-white/95 tracking-wide">
                       {category}
                     </span>
                   </div>
-                  <span className="text-xs text-white/80 block mt-1">
-                    Dominant Pollutant: <strong className="text-white font-bold">{isOfficialValid ? dominant : 'Data Incomplete'}</strong>
+                  <span className="text-xs text-white/80 block mt-1.5 font-medium sm:hidden">
+                    Dominant: <strong className="text-white font-bold">{isOfficialValid ? dominant : 'Data Incomplete'}</strong>
                   </span>
                 </div>
+              </div>
+
+              {/* Dominant Pollutant White Box (matching reference image) */}
+              <div className="hidden sm:flex flex-col items-center justify-center px-4 py-3 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 text-center shrink-0 z-10 shadow-xs">
+                <span className="text-[10px] uppercase font-extrabold text-white/80 tracking-wider block">
+                  Dominant Pollutant
+                </span>
+                <span className="text-xl font-black text-white block mt-0.5">
+                  {isOfficialValid ? dominant : '—'}
+                </span>
               </div>
 
               {/* Decorative subtle background waves */}
@@ -323,54 +333,87 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Smooth Diurnal Spline SVG Chart (matching reference image) */}
-            <div className="relative pt-6 pb-2">
-              <svg viewBox="0 0 600 160" className="w-full h-36 overflow-visible">
-                {/* Gradient definition */}
-                <defs>
-                  <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f97316" stopOpacity="0.4" />
-                    <stop offset="60%" stopColor="#10b981" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
+            {/* Smooth Diurnal Spline SVG Chart + Family Skyline Vector (matching reference image) */}
+            <div className="flex flex-col md:flex-row items-center gap-4 pt-4 pb-2">
+              <div className="flex-1 w-full">
+                <svg viewBox="0 0 600 160" className="w-full h-36 overflow-visible">
+                  {/* Gradient definition */}
+                  <defs>
+                    <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#f97316" stopOpacity="0.4" />
+                      <stop offset="60%" stopColor="#10b981" stopOpacity="0.15" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
 
-                {/* Gridlines */}
-                <line x1="0" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
-                <line x1="0" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
-                <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
+                  {/* Gridlines */}
+                  <line x1="0" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="0" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
 
-                {/* Area fill */}
-                <path
-                  d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75 L600,160 L0,160 Z"
-                  fill="url(#forecastGrad)"
-                />
+                  {/* Area fill */}
+                  <path
+                    d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75 L600,160 L0,160 Z"
+                    fill="url(#forecastGrad)"
+                  />
 
-                {/* Smooth Curve */}
-                <path
-                  d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75"
-                  fill="none"
-                  stroke="#ea580c"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
+                  {/* Smooth Curve */}
+                  <path
+                    d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75"
+                    fill="none"
+                    stroke="#ea580c"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
 
-                {/* Peak 1 Point: Morning Spike */}
-                <circle cx="150" cy="25" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
-                {/* Lowest Point: Midday Expansion */}
-                <circle cx="300" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
-                {/* Peak 2 Point: Evening Spike */}
-                <circle cx="450" cy="30" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
-              </svg>
+                  {/* Peak 1 Point: Morning Spike */}
+                  <circle cx="150" cy="25" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                  {/* Lowest Point: Midday Expansion */}
+                  <circle cx="300" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                  {/* Peak 2 Point: Evening Spike */}
+                  <circle cx="450" cy="30" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                </svg>
 
-              {/* Time Labels on X-axis */}
-              <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-1">
-                <span>12 AM</span>
-                <span>4 AM</span>
-                <span className="text-rose-600 font-extrabold">8 AM (Spike)</span>
-                <span className="text-emerald-700 font-extrabold">12 PM - 3 PM (Low)</span>
-                <span className="text-rose-600 font-extrabold">8 PM (Spike)</span>
-                <span>11 PM</span>
+                {/* Time Labels on X-axis */}
+                <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-1">
+                  <span>12 AM</span>
+                  <span>4 AM</span>
+                  <span className="text-rose-600 font-extrabold">8 AM (Spike)</span>
+                  <span className="text-emerald-700 font-extrabold">12 PM - 3 PM (Low)</span>
+                  <span className="text-rose-600 font-extrabold">8 PM (Spike)</span>
+                  <span>11 PM</span>
+                </div>
+              </div>
+
+              {/* Family Looking at City Skyline Illustration (matching reference design) */}
+              <div className="w-40 sm:w-44 h-36 shrink-0 relative hidden sm:flex items-end justify-center overflow-hidden rounded-2xl bg-gradient-to-t from-sky-100/70 via-amber-50/40 to-transparent border border-slate-100 p-1">
+                <svg viewBox="0 0 160 120" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Distant city skyline */}
+                  <rect x="15" y="45" width="14" height="60" fill="#94a3b8" opacity="0.35" />
+                  <rect x="33" y="30" width="18" height="75" fill="#64748b" opacity="0.3" />
+                  <rect x="55" y="40" width="16" height="65" fill="#94a3b8" opacity="0.25" />
+                  <rect x="75" y="25" width="22" height="80" fill="#475569" opacity="0.25" />
+                  <rect x="102" y="35" width="15" height="70" fill="#64748b" opacity="0.3" />
+                  <rect x="122" y="48" width="20" height="57" fill="#94a3b8" opacity="0.35" />
+
+                  {/* Ground silhouette */}
+                  <ellipse cx="80" cy="120" rx="90" ry="20" fill="#15803d" opacity="0.2" />
+
+                  {/* Father (Right) - teal jacket */}
+                  <circle cx="120" cy="52" r="7" fill="#fed7aa" />
+                  <path d="M115 50 C114 44 125 43 126 49 Z" fill="#1e293b" />
+                  <path d="M112 60 C111 58 128 58 128 60 L132 105 L108 105 Z" fill="#0f766e" />
+
+                  {/* Mother (Center) - terracotta jacket */}
+                  <circle cx="102" cy="56" r="6.5" fill="#fed7aa" />
+                  <path d="M96 54 C95 47 108 46 109 53 Z" fill="#451a03" />
+                  <path d="M96 64 C95 62 109 62 109 64 L112 105 L93 105 Z" fill="#9a3412" />
+
+                  {/* Child (Left) - yellow jacket */}
+                  <circle cx="86" cy="68" r="5.5" fill="#fed7aa" />
+                  <path d="M82 66 C81 60 91 59 92 65 Z" fill="#78350f" />
+                  <path d="M80 75 C79 73 92 73 92 75 L95 105 L78 105 Z" fill="#eab308" />
+                </svg>
               </div>
             </div>
           </div>

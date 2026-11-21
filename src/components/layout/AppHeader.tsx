@@ -221,9 +221,42 @@ export function AppHeader({
             </select>
           </div>
 
-          {/* User Avatar */}
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-black text-xs flex items-center justify-center shadow-xs border-2 border-white ring-1 ring-slate-200">
-            P
+          {/* Notification Bell */}
+          <div className="relative">
+            <button
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="relative w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-xs transition-colors"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-1.5 ring-white" />
+            </button>
+
+            {notificationsOpen && (
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-xs">
+                <div className="font-bold text-slate-900 pb-1.5 border-b border-slate-100 flex items-center justify-between">
+                  <span>Environmental Alerts</span>
+                  <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">Live</span>
+                </div>
+                <div className="py-2 space-y-2">
+                  <div className="p-2 rounded-xl bg-amber-50/70 border border-amber-100 text-[11px] text-amber-900">
+                    <strong className="block text-amber-950 font-bold">Evening Inversion Watch</strong>
+                    Surface PM2.5 expected to rise after 6:30 PM across urban corridors.
+                  </div>
+                  <div className="p-2 rounded-xl bg-emerald-50/70 border border-emerald-100 text-[11px] text-emerald-900">
+                    <strong className="block text-emerald-950 font-bold">Midday Ventilation Window</strong>
+                    Plan outdoor errands and controlled ventilation between 1:00 - 3:30 PM.
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* User Avatar matching Reference Image */}
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-amber-200 to-amber-100 border border-amber-300/60 shadow-xs flex items-center justify-center">
+            <svg viewBox="0 0 32 32" className="w-full h-full text-amber-800" fill="currentColor">
+              <path d="M16 16c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm0 4c-4.42 0-8 3.58-8 8h16c0-4.42-3.58-8-8-8z" />
+            </svg>
           </div>
         </div>
       </div>
