@@ -59,11 +59,16 @@ export default function ImpactPage() {
           {/* Left: 3 Metric Cards Grid */}
           <div className="w-full lg:flex-1 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">
-                Your Impact (Today vs. Baseline)
-              </h2>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">
+                  Calculated Impact (Scenario vs. Baseline)
+                </h2>
+                <span className="text-[11px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-200 inline-block mt-0.5">
+                  Modelled Estimates (ARAI &amp; CEA Database v19)
+                </span>
+              </div>
               <span className="text-xs text-slate-400 font-medium">
-                14 km commute • Adapted schedule
+                14 km commute • Heuristic Schedule
               </span>
             </div>
 
@@ -75,14 +80,14 @@ export default function ImpactPage() {
                     <Clock className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Exposure Shift
+                    Exposure Window Shift
                   </span>
                   <div className="text-2xl sm:text-3xl font-black text-sky-950 mt-1">
                     -{hoursShifted} hrs
                   </div>
                 </div>
                 <p className="text-[11px] text-sky-800 mt-3 font-medium">
-                  away from high pollution (&gt;300 AQI)
+                  Behavioral shift away from peak smog (&gt;300 AQI window)
                 </p>
               </div>
 

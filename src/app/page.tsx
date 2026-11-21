@@ -70,7 +70,9 @@ export default function DashboardPage() {
             <span>Air Intelligence Command Center • {aqiData.city}</span>
           </span>
           <p className="text-xs text-slate-500 mt-0.5">
-            Station: {aqiData.provenance.sourceName} • {aqiData.isNCR ? 'CAQM Statutory Zone' : 'State PCB Framework'}
+            {aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
+              ? `Model: Copernicus CAMS Global (~45 km grid) • ${aqiData.provenance.spatialResolution}`
+              : `Station: ${aqiData.provenance.sourceName} • ${aqiData.isNCR ? 'CAQM Statutory Zone' : 'State PCB Framework'}`}
           </p>
         </div>
 
@@ -84,7 +86,13 @@ export default function DashboardPage() {
               : 'bg-amber-50 text-amber-800 border-amber-200'
           }`}>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{aqiData.provenance.type === 'MEASURED_STATION' ? 'Measured Station Data' : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST' ? 'Model Forecast (~45km)' : 'Demonstration Smog Profile'}</span>
+            <span>
+              {aqiData.provenance.type === 'MEASURED_STATION'
+                ? 'Measured Station Data'
+                : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
+                ? 'CAMS Global Model (~45 km)'
+                : 'CPCB Reference Record (Demo)'}
+            </span>
           </span>
         </div>
       </div>

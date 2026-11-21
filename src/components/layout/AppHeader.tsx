@@ -249,6 +249,14 @@ export function AppHeader({
           </button>
         </div>
       )}
+
+      {/* Multilingual Scope Notice */}
+      {language !== 'en' && t('languageNotice') && (
+        <div className="bg-sky-50/90 border-t border-sky-200 px-4 sm:px-6 py-1.5 text-[11px] text-sky-900 flex items-center justify-between gap-2">
+          <span>🌐 {t('languageNotice')}</span>
+          <span className="text-[10px] text-sky-600 font-semibold uppercase tracking-wider">Localization Beta</span>
+        </div>
+      )}
     </header>
   );
 }

@@ -64,7 +64,7 @@ export default function AssistantPage() {
         "It's strongly advised to avoid prolonged or strenuous outdoor play, especially for young children and asthmatic family members.",
         "Plan indoor activities instead (board games, drawing, story reading, or indoor stretching).",
         "If outdoor time is essential, limit it to ≤ 15 minutes during the afternoon (2:00 – 4:00 PM) when boundary-layer mixing temporarily lowers surface particulate density.",
-        "Ensure children wear a well-fitted pediatric N95/KN95 respirator if stepping outside near traffic corridors."
+        "Prioritize keeping children indoors in low-activity filtered environments during elevated smog. Masks designed for adults do not achieve reliable seals on pediatric facial anatomy and cannot substitute for reducing outdoor exposure."
       ],
       caveats: [
         "Medical Disclaimer: BreatheWise AI provides environmental lifestyle guidance, not individualized clinical diagnoses. Consult your pediatrician for personal respiratory action plans."

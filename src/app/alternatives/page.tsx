@@ -20,12 +20,25 @@ import {
 } from 'lucide-react';
 import { TransportMode } from '@/lib/types/alternatives';
 import { compareTransportAlternatives, TRANSPORT_FACTORS } from '@/lib/engine/alternatives';
-
+import { useCity } from '@/context/CityContext';
 import { useScenario } from '@/context/ScenarioContext';
+
+const CITY_TRANSIT_NAMES: Record<string, string> = {
+  'Delhi-NCR': 'Delhi Metro (DMRC Network)',
+  'Hyderabad': 'Hyderabad Metro Rail (HMR)',
+  'Mumbai': 'Mumbai Metro / Suburban Rail',
+  'Bengaluru': 'Namma Metro (BMRCL)',
+  'Kolkata': 'Kolkata Metro Network',
+  'Pune': 'Pune Metro Rail',
+  'Chennai': 'Chennai Metro Rail (CMRL)',
+  'Lucknow': 'Lucknow Metro (UPMRC)',
+  'Patna': 'Patna Electric Rapid Transit',
+};
 
 type CategoryTab = 'COMMUTE' | 'HOME_ENERGY' | 'DAILY_HABITS';
 
 export default function AlternativesPage() {
+  const { selectedCity } = useCity();
   const { profile } = useScenario();
   const [activeTab, setActiveTab] = useState<CategoryTab>('COMMUTE');
   const [distanceKm, setDistanceKm] = useState<number>(profile.commuteDistanceKm || 14);
@@ -255,7 +268,11 @@ export default function AlternativesPage() {
                             ) : (
                               <Users className="w-4 h-4 text-indigo-600" />
                             )}
-                            <span className="font-bold text-slate-800">{alt.name}</span>
+                            <span className="font-bold text-slate-800">
+                              {alt.mode === 'DELHI_METRO'
+                                ? CITY_TRANSIT_NAMES[selectedCity] || 'Electric Rapid Metro'
+                                : alt.name}
+                            </span>
                           </div>
                         </td>
                         <td className="py-3.5 px-3 text-slate-600">{roundTripTime} min</td>

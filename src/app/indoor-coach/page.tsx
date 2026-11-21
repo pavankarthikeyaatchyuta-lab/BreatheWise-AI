@@ -402,13 +402,16 @@ export default function IndoorCoachPage() {
               </div>
               <div className="space-y-1.5 text-xs text-slate-700">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Scientific Fact-Check: Can Indoor Houseplants Filter PM2.5 Smog?
+                  Scientific Fact-Check: Can Houseplants Purify Indoor Air?
                 </h3>
-                <p className="leading-relaxed">
-                  <strong>No.</strong> While commonly claimed online, potted houseplants have <em>zero measurable effect on indoor PM2.5 or PM10 particulate levels</em>. The 1989 NASA study evaluated volatile chemicals (VOCs) inside sealed 1-cubic-meter chambers; real-world residential rooms have constant air exchange.
+                <p className="leading-relaxed font-semibold text-slate-800">
+                  No evidence shows that a reasonable number of ordinary houseplants removes significant quantities of pollutants in homes and offices. Do not rely on plants as a substitute for source control or filtration.
+                </p>
+                <p className="leading-relaxed text-slate-600">
+                  The common claim originates from the 1989 NASA Clean Air study, which tested volatile organic compounds (VOCs) inside sealed 1-m³ chambers. In typical living spaces with natural air exchange, potted houseplants have negligible impact on PM2.5 or PM10 particulate levels.
                 </p>
                 <p className="leading-relaxed text-amber-950 font-medium">
-                  <strong>Practical Rule:</strong> Never rely on plants as air-cleaning devices for children, senior citizens, or asthmatics. Only physical particle capture—via high Clean Air Delivery Rate (CADR) HEPA purifiers or safe DIY Corsi-Rosenthal boxes—combined with kitchen exhaust source control effectively clears toxic particulates.
+                  <strong>Practical Rule:</strong> Effective particulate protection requires source control (such as kitchen exhaust fans and partitions) and verified high Clean Air Delivery Rate (CADR) mechanical filtration (certified HEPA or DIY Corsi-Rosenthal boxes).
                 </p>
               </div>
             </div>

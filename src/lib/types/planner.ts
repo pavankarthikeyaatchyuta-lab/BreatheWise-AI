@@ -16,7 +16,7 @@ export interface PlannedActivity {
   adaptedTime?: string; // "14:00"
   adaptedLocation?: 'INDOOR' | 'OUTDOOR_PROTECTED' | 'DELAYED';
   reasonForChange?: string;
-  protectionRequired?: 'N95_RESPIRATOR' | 'NONE' | 'AVOID_ACTIVITY';
+  protectionRequired?: 'N95_RESPIRATOR' | 'REDUCE_EXPOSURE' | 'NONE' | 'AVOID_ACTIVITY';
   estimatedAQIAtOriginalTime?: number;
   estimatedAQIAtAdaptedTime?: number;
 }

@@ -254,7 +254,7 @@ export default function PlannerPage() {
                     )}
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Adjust departure by 15-20 min to avoid peak school gate diesel idling queues (behavioral heuristic). Wear a certified N95 respirator if traveling via open two-wheeler.
+                    Behavioral scheduling heuristic: Adjust departure by 15-20 min to reduce proximity to peak school drop-off idling exhaust. Prioritize enclosed transit and indoor alternatives for children (do not rely on adult masks for pediatric protection). Adult two-wheeler riders should wear a fitted N95 respirator.
                   </p>
                 </div>
               </div>

@@ -84,7 +84,7 @@ export const EVALUATOR_SCENARIOS: Record<EvaluatorScenarioId, EvaluatorScenario>
     badge: 'Child Protection',
     icon: 'GraduationCap',
     summary: 'Household with a school-going child, 2-wheeler commute, and zero expensive air-purification equipment.',
-    targetFocus: 'School gate exhaust avoidance, child N95 respirators, kitchen partition, and wet mopping protocols.',
+    targetFocus: 'School gate idling avoidance heuristic, minimizing pediatric outdoor exposure, kitchen partition, and wet mopping protocols.',
     profile: {
       city: 'Delhi-NCR',
       isNCR: true,
@@ -107,7 +107,7 @@ export const EVALUATOR_SCENARIOS: Record<EvaluatorScenarioId, EvaluatorScenario>
     badge: 'Senior & Health',
     icon: 'HeartHandshake',
     summary: 'Elderly family members with respiratory sensitivities who love outdoor morning exercise.',
-    targetFocus: 'Winter inversion morning walk hazard alert, shifting exercise indoors, and midday garden seating.',
+    targetFocus: 'Winter inversion morning walk hazard alert, shifting exercise indoors, and clinician-approved asthma plan adherence.',
     profile: {
       city: 'Delhi-NCR',
       isNCR: true,

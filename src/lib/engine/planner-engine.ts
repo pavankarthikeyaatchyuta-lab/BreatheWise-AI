@@ -73,8 +73,8 @@ export function generateDailyPlan(
       adaptedTime: '08:05',
       adaptedLocation: 'OUTDOOR_PROTECTED',
       reasonForChange:
-        'Behavioral heuristic: Adjusting departure by 15-20 minutes avoids the peak 15-minute school gate drop-off rush, minimizing student exposure to idling vehicle exhaust fumes (Note: this is a behavioral schedule heuristic, not live GPS traffic tracking). Ensure child wears a certified child-sized N95 respirator if stepping onto the street.',
-      protectionRequired: profile.hasInfantsOrChildren ? 'N95_RESPIRATOR' : 'NONE',
+        'Behavioral scheduling heuristic: Adjusting departure by 15-20 minutes is intended to help reduce exposure to concentrated curbside vehicle idling queues during peak drop-off windows (behavioral heuristic, not live GPS tracking). Prioritize minimizing outdoor exposure time and shifting activities indoors; masks designed for adults do not achieve reliable facial seals on pediatric anatomy and must not be relied upon as a substitute for exposure reduction.',
+      protectionRequired: profile.hasInfantsOrChildren ? 'REDUCE_EXPOSURE' : 'NONE',
       estimatedAQIAtOriginalTime: 395,
       estimatedAQIAtAdaptedTime: 340,
     },
@@ -124,12 +124,12 @@ export function generateDailyPlan(
   }
   if (profile.hasElderly) {
     vulnerabilitySpecificAlerts.push(
-      'SENIOR CITIZEN ADVISORY: Cancel early morning garden walks (typically between 5:30 AM and 8:30 AM). Keep indoor humidity balanced and take routine prescribed cardiac/respiratory medications on schedule.'
+      'SENIOR CITIZEN ADVISORY: Cancel early morning garden walks (typically between 5:30 AM and 8:30 AM). Keep indoor humidity balanced and follow your clinician-approved personal healthcare action plan.'
     );
   }
   if (profile.hasRespiratorySensitivity) {
     vulnerabilitySpecificAlerts.push(
-      'RESPIRATORY / ASTHMA SENSITIVITY: Keep fast-acting rescue inhalers accessible. Ensure indoor particulate levels are minimized via wet mopping; avoid agarbatti, mosquito coils, and room freshener aerosols.'
+      'RESPIRATORY / ASTHMA SENSITIVITY: Follow your existing clinician-approved asthma action plan. Ensure indoor particulate levels are minimized via wet mopping; avoid agarbatti, mosquito coils, and room freshener aerosols.'
     );
   }
 

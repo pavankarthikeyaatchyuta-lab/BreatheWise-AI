@@ -38,6 +38,7 @@ export interface Translations {
   diurnalForecast: string;
   viewDetails: string;
   scientificDisclaimer: string;
+  languageNotice: string;
 }
 
 export const TRANSLATIONS: Record<SupportedLanguage, Translations> = {
@@ -70,6 +71,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Translations> = {
     diurnalForecast: '24-Hour Diurnal Forecast',
     viewDetails: 'View Calculation Proof',
     scientificDisclaimer: 'Evidence-based environmental guidance. Does not replace clinical healthcare advice.',
+    languageNotice: '',
   },
   te: {
     navDashboard: 'డ్యాష్‌బోర్డ్',
@@ -100,6 +102,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Translations> = {
     diurnalForecast: '24 గంటల పగటి-రాత్రి అంచనా',
     viewDetails: 'లెక్కింపు రుజువు చూడండి',
     scientificDisclaimer: 'శాస్త్రీయ ఆధారిత పర్యావరణ మార్గదర్శనం. ఇది క్లినికల్ వైద్య సలహా కాదు.',
+    languageNotice: 'గమనిక: ప్రాథమిక నావిగేషన్ మరియు AI సహాయకుడు తెలుగులో అందుబాటులో ఉన్నాయి; వివరణాత్మక ఇంపాక్ట్ సూత్రాలు ఆంగ్లంలో ప్రదర్శించబడతాయి.',
   },
   hi: {
     navDashboard: 'डैशबोर्ड',
@@ -130,5 +133,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, Translations> = {
     diurnalForecast: '24 घंटे का डायूरनल पूर्वानुमान',
     viewDetails: 'गणना प्रमाण देखें',
     scientificDisclaimer: 'वैज्ञानिक रूप से प्रमाणित पर्यावरणीय मार्गदर्शन। यह नैदानिक चिकित्सा सलाह नहीं है।',
+    languageNotice: 'सूचना: प्राथमिक नेविगेशन और AI सहायक हिंदी में उपलब्ध हैं; विस्तृत तकनीकी व प्रभाव गणनाएं अंग्रेजी में हैं।',
   },
 };

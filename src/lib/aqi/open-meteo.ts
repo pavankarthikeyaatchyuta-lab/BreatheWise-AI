@@ -74,15 +74,15 @@ export function parseOpenMeteoForecast(
 
   const provenance: ProvenanceMetadata = {
     type: 'ATMOSPHERIC_MODEL_FORECAST',
-    sourceName: 'Open-Meteo Air Quality (Copernicus CAMS & NOAA GFS)',
-    spatialResolution: '~45 km Atmospheric Model Grid (Not Street-Level)',
+    sourceName: 'Open-Meteo Air Quality (Copernicus CAMS Global ~45 km)',
+    spatialResolution: '~45 km Grid (ECMWF IFS-AER Global, not European 11km domain)',
     temporalResolution: '1-hour forecast step',
     measurementTimestamp: new Date().toISOString(),
     fetchedAt: new Date().toISOString(),
     isAveraged24h: false,
     monitoredHoursAvailable: limit,
     validPollutantCount: 6,
-    attributionUrl: 'https://open-meteo.com/',
+    attributionUrl: 'https://open-meteo.com/en/docs/air-quality-api',
   };
 
   return { forecast24h, provenance };
@@ -132,7 +132,7 @@ export async function fetchOpenMeteoForecast(
   lon: number
 ): Promise<{ forecast24h: DiurnalForecastHour[]; currentModelResult: ReturnType<typeof getModelDerivedCurrentResult>; provenance: ProvenanceMetadata } | null> {
   try {
-    const url = `https://air-quality-api.open-meteo.com/v1/air_quality?latitude=${lat}&longitude=${lon}&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto&forecast_days=2`;
+    const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto&forecast_days=2`;
     const res = await fetch(url, { next: { revalidate: 1800 } }); // Cache 30 mins
     if (!res.ok) return null;
     const json: OpenMeteoHourlyResponse = await res.json();

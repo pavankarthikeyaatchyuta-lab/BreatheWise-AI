@@ -51,11 +51,12 @@ describe('Personalization & Evaluator Scenario Verification', () => {
     const childProfile = EVALUATOR_SCENARIOS.FAMILY_WITH_CHILD.profile;
     const plan = generateDailyPlan(childProfile, severeDelhiState);
 
-    it('mandates pediatric N95 respirator for school transit on two-wheeler', () => {
+    it('prioritizes pediatric exposure reduction and avoids mandating adult N95 masks for children', () => {
       const schoolAct = plan.activities.find((a) => a.type === 'SCHOOL_COMMUTE');
       expect(schoolAct).toBeDefined();
-      expect(schoolAct?.protectionRequired).toBe('N95_RESPIRATOR');
-      expect(schoolAct?.reasonForChange).toContain('child-sized N95 respirator');
+      expect(schoolAct?.protectionRequired).toBe('REDUCE_EXPOSURE');
+      expect(schoolAct?.reasonForChange).toContain('Behavioral scheduling heuristic');
+      expect(schoolAct?.reasonForChange).toContain('do not achieve reliable facial seals on pediatric anatomy');
     });
 
     it('triggers explicit Child Health Advisory grounded in higher ventilation rates per kg', () => {
@@ -65,7 +66,7 @@ describe('Personalization & Evaluator Scenario Verification', () => {
       expect(childAlert).toContain('Cancel outdoor sports training');
     });
 
-    it('requires N95 respirator for two-wheeler work commute', () => {
+    it('requires N95 respirator for adult two-wheeler work commute', () => {
       const commuteAct = plan.activities.find((a) => a.type === 'WORK_COMMUTE');
       expect(commuteAct?.protectionRequired).toBe('N95_RESPIRATOR');
       expect(commuteAct?.reasonForChange).toContain('Two-wheeler riders experience direct roadside exhaust wake');
@@ -76,17 +77,19 @@ describe('Personalization & Evaluator Scenario Verification', () => {
     const seniorProfile = EVALUATOR_SCENARIOS.SENIOR_HOUSEHOLD.profile;
     const plan = generateDailyPlan(seniorProfile, severeDelhiState);
 
-    it('triggers Senior Citizen early morning walk cancellation alert', () => {
+    it('triggers Senior Citizen early morning walk cancellation alert and clinician action plan', () => {
       const seniorAlert = plan.vulnerabilitySpecificAlerts.find((a) => a.includes('SENIOR CITIZEN ADVISORY'));
       expect(seniorAlert).toBeDefined();
       expect(seniorAlert).toContain('Cancel early morning garden walks');
-      expect(seniorAlert).toContain('prescribed cardiac/respiratory medications');
+      expect(seniorAlert).toContain('clinician-approved personal healthcare action plan');
+      expect(seniorAlert).not.toContain('take routine prescribed cardiac');
     });
 
-    it('triggers Respiratory & Asthma sensitivity alerts for damp mopping and inhaler readiness', () => {
+    it('triggers Respiratory & Asthma sensitivity alerts directing to clinician asthma action plan without altering prescriptions', () => {
       const asthmaAlert = plan.vulnerabilitySpecificAlerts.find((a) => a.includes('RESPIRATORY / ASTHMA SENSITIVITY'));
       expect(asthmaAlert).toBeDefined();
-      expect(asthmaAlert).toContain('rescue inhalers accessible');
+      expect(asthmaAlert).toContain('Follow your existing clinician-approved asthma action plan');
+      expect(asthmaAlert).not.toContain('rescue inhalers');
       expect(asthmaAlert).toContain('wet mopping; avoid agarbatti');
     });
 
