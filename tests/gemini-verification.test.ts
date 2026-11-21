@@ -19,6 +19,10 @@ describe('Gemini AI Verification & Resilience Suite', () => {
       expect(res.actionChecklist.length).toBeGreaterThan(0);
       expect(res.groundedFactors.referencedAqi).toBe(currentAqi);
       expect(res.disclaimer).toContain('BreatheWise AI provides evidence-based environmental decision support');
+      expect(res.providerMeta).toBeDefined();
+      expect(res.providerMeta?.fallbackUsed).toBe(true);
+      expect(res.providerMeta?.success).toBe(false);
+      expect(res.providerMeta?.errorCategory).toBe('NO_API_KEY_CONFIGURED');
     } finally {
       process.env.GEMINI_API_KEY = originalKey;
     }
@@ -35,6 +39,8 @@ describe('Gemini AI Verification & Resilience Suite', () => {
       const res = await askGroundedAssistant(q, aqiState, DEFAULT_HOUSEHOLD_PROFILE);
       expect(res.reply).toContain('Your request could not be processed');
       expect(res.groundedFactors.keyVulnerabilityAddressed).toBe('Input Security Filter');
+      expect(res.providerMeta?.provider).toBe('Security Filter');
+      expect(res.providerMeta?.fallbackUsed).toBe(true);
     }
   });
 
@@ -49,6 +55,9 @@ describe('Gemini AI Verification & Resilience Suite', () => {
       expect(res.reply).toBeDefined();
       expect(res.groundedFactors.referencedAqi).toBe(currentAqi);
       expect(res.actionChecklist.length).toBeGreaterThan(0);
+      expect(res.providerMeta?.fallbackUsed).toBe(true);
+      expect(res.providerMeta?.success).toBe(false);
+      expect(res.providerMeta?.provider).toBe('Deterministic Grounded Engine');
     } finally {
       process.env.GEMINI_API_KEY = originalKey;
     }
@@ -97,4 +106,21 @@ describe('Gemini AI Verification & Resilience Suite', () => {
       process.env.GEMINI_API_KEY = originalKey;
     }
   }, 15000);
+
+  it('6. Strictly provides complete internal provider metadata (provider, model, fallbackUsed, success, errorCategory)', async () => {
+    const originalKey = process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+
+    try {
+      const res = await askGroundedAssistant('Is air safe now?', aqiState, DEFAULT_HOUSEHOLD_PROFILE);
+      expect(res.providerMeta).toBeDefined();
+      expect(typeof res.providerMeta?.provider).toBe('string');
+      expect(typeof res.providerMeta?.model).toBe('string');
+      expect(typeof res.providerMeta?.fallbackUsed).toBe('boolean');
+      expect(typeof res.providerMeta?.success).toBe('boolean');
+      expect(res.providerMeta).toHaveProperty('errorCategory');
+    } finally {
+      process.env.GEMINI_API_KEY = originalKey;
+    }
+  });
 });

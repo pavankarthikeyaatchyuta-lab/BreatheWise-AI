@@ -58,11 +58,11 @@ export function evaluateIndoorGuidance(
   if (outdoorPm25 > 120 || (outdoorAqi !== null && outdoorAqi > 250)) {
     canVentilateNow = false;
     recommendedAction = 'KEEP_WINDOWS_SEALED';
-    explanation = `Outdoor ambient PM2.5 is currently ${Math.round(outdoorPm25)} µg/m³ (significantly above safe indoor thresholds). Keep all exterior windows, doors, and balcony vents tightly closed. Opening windows will flood indoor living spaces with fine particulates.`;
+    explanation = `Application Behavioral Heuristic (Practical particulate-protection rule derived from CPCB 24-hour Poor-to-Very Poor boundary of 121 µg/m³; intended to guide household ventilation during severe smog episodes rather than an official statutory medical standard): Outdoor ambient PM2.5 is currently ${Math.round(outdoorPm25)} µg/m³. Keep all exterior windows, doors, and balcony vents tightly closed. Opening windows will flood indoor living spaces with fine particulates.`;
   } else if (outdoorPm25 > 60 || (outdoorAqi !== null && outdoorAqi > 100)) {
     canVentilateNow = false;
     recommendedAction = 'SHORT_CONTROLLED_VENTILATION';
-    explanation = `Outdoor air is moderately polluted (${Math.round(outdoorPm25)} µg/m³). Avoid continuous open windows. If CO₂ buildup or stuffiness occurs, allow a brief 10-minute cross-ventilation during the afternoon relative low, then reseal.`;
+    explanation = `Application Behavioral Heuristic (Derived from CPCB 24-hour Satisfactory-to-Moderate boundary of 60 µg/m³): Outdoor air is moderately polluted (${Math.round(outdoorPm25)} µg/m³). Avoid continuous open windows. If CO₂ buildup or stuffiness occurs, allow a brief 10-minute controlled cross-ventilation during the afternoon relative low, then reseal.`;
   } else {
     canVentilateNow = true;
     recommendedAction = 'CROSS_VENTILATE_FREELY';

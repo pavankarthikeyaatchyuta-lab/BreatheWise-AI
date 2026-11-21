@@ -92,13 +92,30 @@ export async function askGroundedAssistant(
         },
       ],
       disclaimer: 'Security validation alert.',
+      providerMeta: {
+        provider: 'Security Filter',
+        model: 'input-guard-v1',
+        fallbackUsed: true,
+        success: false,
+        errorCategory: 'PROMPT_INJECTION_OR_UNSAFE_INPUT',
+      },
     };
   }
 
   const apiKey = resolveGeminiApiKey();
   if (!apiKey || apiKey.trim() === '') {
     // Graceful fallback to deterministic assistant
-    return generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+    const fallback = generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+    return {
+      ...fallback,
+      providerMeta: {
+        provider: 'Deterministic Grounded Engine',
+        model: 'deterministic-rules-v1',
+        fallbackUsed: true,
+        success: false,
+        errorCategory: 'NO_API_KEY_CONFIGURED',
+      },
+    };
   }
 
   const modelName = resolveGeminiModel();
@@ -173,20 +190,74 @@ Respond with a JSON object with this exact structure:
 
     const responseText = response.text;
     if (!responseText) {
-      return generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+      const fallback = generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+      return {
+        ...fallback,
+        providerMeta: {
+          provider: 'Deterministic Grounded Engine',
+          model: 'deterministic-rules-v1',
+          fallbackUsed: true,
+          success: false,
+          errorCategory: 'EMPTY_MODEL_RESPONSE',
+        },
+      };
     }
 
     const parsed = JSON.parse(responseText);
     const validated = AIAssistantResponseSchema.safeParse(parsed);
 
     if (validated.success) {
-      return validated.data;
+      return {
+        ...validated.data,
+        providerMeta: {
+          provider: 'Google Gemini',
+          model: modelName,
+          fallbackUsed: false,
+          success: true,
+          errorCategory: null,
+        },
+      };
     } else {
       console.warn('Gemini response failed Zod schema validation, falling back:', validated.error);
-      return generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+      const fallback = generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+      return {
+        ...fallback,
+        providerMeta: {
+          provider: 'Deterministic Grounded Engine',
+          model: 'deterministic-rules-v1',
+          fallbackUsed: true,
+          success: false,
+          errorCategory: 'SCHEMA_VALIDATION_FAILURE',
+        },
+      };
     }
-  } catch (err) {
-    console.warn('Gemini API call failed, falling back to deterministic response:', err);
-    return generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+  } catch (err: unknown) {
+    let errorCategory = 'API_ERROR';
+    if (err && typeof err === 'object') {
+      const anyErr = err as { status?: number; message?: string };
+      if (anyErr.status === 400 || anyErr.message?.includes('API_KEY_INVALID')) {
+        errorCategory = 'INVALID_API_KEY';
+      } else if (anyErr.status === 404 || anyErr.message?.includes('not found') || anyErr.message?.includes('no longer available')) {
+        errorCategory = 'MODEL_NOT_FOUND_OR_DEPRECATED';
+      } else if (anyErr.status === 429 || anyErr.message?.includes('quota') || anyErr.message?.includes('RESOURCE_EXHAUSTED')) {
+        errorCategory = 'RATE_LIMIT_OR_QUOTA_EXHAUSTED';
+      } else if (anyErr.status === 503 || anyErr.message?.includes('high demand') || anyErr.message?.includes('overloaded')) {
+        errorCategory = 'UPSTREAM_MODEL_OVERLOADED_503';
+      } else if (anyErr.message?.includes('fetch failed') || anyErr.message?.includes('ENOTFOUND')) {
+        errorCategory = 'NETWORK_CONNECTIVITY_ERROR';
+      }
+    }
+    console.warn(`Gemini API call failed (${errorCategory}), falling back to deterministic response:`, err);
+    const fallback = generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
+    return {
+      ...fallback,
+      providerMeta: {
+        provider: 'Deterministic Grounded Engine',
+        model: 'deterministic-rules-v1',
+        fallbackUsed: true,
+        success: false,
+        errorCategory,
+      },
+    };
   }
 }

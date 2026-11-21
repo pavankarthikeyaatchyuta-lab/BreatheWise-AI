@@ -51,7 +51,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-1.5">
                 <ExternalLink className="w-3 h-3 text-emerald-500" />
-                <span>Central Electricity Authority (Grid CO₂ v19)</span>
+                <span>Central Electricity Authority (Grid CO₂ v22.0, Aug 2026)</span>
               </li>
               <li className="flex items-center gap-1.5">
                 <ExternalLink className="w-3 h-3 text-emerald-500" />

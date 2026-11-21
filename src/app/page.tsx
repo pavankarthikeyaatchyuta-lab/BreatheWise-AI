@@ -71,7 +71,7 @@ export default function DashboardPage() {
           </span>
           <p className="text-xs text-slate-500 mt-0.5">
             {aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
-              ? `Model: Copernicus CAMS Global (~45 km grid) • ${aqiData.provenance.spatialResolution}`
+              ? `Model: Copernicus CAMS Global (~45 km grid, ~0.4° resolution; 3-hourly underlying model steps interpolated hourly)`
               : `Station: ${aqiData.provenance.sourceName} • ${aqiData.isNCR ? 'CAQM Statutory Zone' : 'State PCB Framework'}`}
           </p>
         </div>
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                   <span>24-Hour AQI Diurnal Forecast</span>
                 </h2>
                 <span className="text-[11px] text-slate-400">
-                  Model Source: Open-Meteo (~45 km Atmospheric Model)
+                  Model Source: Copernicus CAMS Global via Open-Meteo (~45 km grid; 3-hourly underlying model steps interpolated to hourly output)
                 </span>
               </div>
 

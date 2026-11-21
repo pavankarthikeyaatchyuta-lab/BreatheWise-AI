@@ -75,8 +75,8 @@ export function parseOpenMeteoForecast(
   const provenance: ProvenanceMetadata = {
     type: 'ATMOSPHERIC_MODEL_FORECAST',
     sourceName: 'Open-Meteo Air Quality (Copernicus CAMS Global ~45 km)',
-    spatialResolution: '~45 km Grid (ECMWF IFS-AER Global, not European 11km domain)',
-    temporalResolution: '1-hour forecast step',
+    spatialResolution: '~45 km Grid (ECMWF IFS-AER Global Atmospheric Composition, ~0.4° domain)',
+    temporalResolution: '3-hourly underlying model resolution (interpolated to hourly API steps; not 24 independent hourly model runs)',
     measurementTimestamp: new Date().toISOString(),
     fetchedAt: new Date().toISOString(),
     isAveraged24h: false,

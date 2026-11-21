@@ -47,7 +47,8 @@ describe('3-Tier Explainable Impact Engine Suite', () => {
     expect(impact.tier3Ghg.baselineCo2eKg).toBe(2.13);
     expect(impact.tier3Ghg.adaptedCo2eKg).toBe(0.39);
     expect(impact.tier3Ghg.netAvoidedCo2eKg).toBe(1.74);
-    expect(impact.tier3Ghg.constantsUsed.gridFactor).toContain('0.716 kg CO₂/kWh');
+    expect(impact.tier3Ghg.constantsUsed.gridFactor).toContain('0.675 kg CO₂/kWh');
+    expect(impact.tier3Ghg.constantsUsed.gridFactor).toContain('Version 22.0');
   });
 
   it('adjusts passenger-km emissions for carpooling (4 passengers)', () => {

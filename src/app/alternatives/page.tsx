@@ -341,7 +341,7 @@ export default function AlternativesPage() {
                 BEE 5-Star BLDC Ceiling Fans
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                Replacing conventional 75W induction ceiling fans with 28W BLDC fans saves ~150 kWh per fan annually. At India&apos;s CEA emission factor (0.716 kg CO₂/kWh), this prevents 107 kg of CO₂e per fan every year.
+                Replacing conventional 75W induction ceiling fans with 28W BLDC fans saves ~150 kWh per fan annually. At India&apos;s CEA Version 22.0 emission factor (0.675 kg CO₂/kWh, FY 2025–26), this prevents 101.3 kg of CO₂e per fan every year.
               </p>
               <div className="p-3 bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 space-y-1">
                 <div>• 62% reduction in electricity consumption</div>

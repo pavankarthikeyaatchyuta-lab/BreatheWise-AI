@@ -14,7 +14,7 @@ This audit assesses the technical availability, licensing, rate limits, latency,
 1. **CPCB NAQI Calculation vs. Direct CPCB Station Feed:**  
    BreatheWise AI implements the full official **CPCB 8-Pollutant NAQI Breakpoint and Sub-Index Mathematical Engine** (PM2.5, PM10, NO2, SO2, CO, O3, NH3, Pb with 16h/24h averaging rules). However, an official CPCB sub-index calculator does **not** constitute a direct real-time telemetry socket into CPCB servers.
 2. **Atmospheric Forecast vs. Station Observation:**  
-   Open-Meteo provides atmospheric chemistry model forecasts (ECMWF CAMS and SILAM at ~11 km resolution), not ground station sensor telemetry. BreatheWise AI strictly labels Open-Meteo data as `ATMOSPHERIC_MODEL_FORECAST` and never fabricates physical station provenance.
+   Open-Meteo provides atmospheric chemistry model forecasts from ECMWF Copernicus Atmosphere Monitoring Service (CAMS Global at ~45 km / ~0.4° spatial resolution). The underlying CAMS Global numerical model runs on 3-hourly time steps; Open-Meteo interpolates these to hourly steps in its API. BreatheWise AI strictly labels Open-Meteo data as `ATMOSPHERIC_MODEL_FORECAST`, discloses its ~45 km spatial resolution and 3-hourly model origin, and never fabricates physical station provenance or claims independent hourly model runs.
 3. **No Mock Fabrication:**  
    When pollutant sensors are absent (e.g., NH3 or Pb at particulate-only monitoring sites), values remain `null` / `unavailable`. They are never manufactured.
 
@@ -32,7 +32,7 @@ This audit assesses the technical availability, licensing, rate limits, latency,
 | **Rate Limits** | 10,000 requests/day per API key; subject to throttling | 5–10 requests/sec (public tier) | 10,000 calls/day free; non-commercial | Unlimited (Local / In-Memory) |
 | **Data Freshness** | High latency: updates every 1–4 hours; frequent station downtimes | Continuous (updated hourly as stations publish) | Updated every 1–3 hours from model runs | Validated against CPCB 2024–2026 NAQI benchmarks |
 | **Criteria Pollutants** | Up to 8 criteria pollutants where physical analyzers exist | PM2.5, PM10, NO2, SO2, CO, O3 (NH3/Pb rare) | PM2.5, PM10, NO2, SO2, CO, O3 (No NH3, No Pb) | Full 8 criteria pollutants with CPCB sub-indices |
-| **Spatial Resolution** | Point coordinates (e.g. Anand Vihar, Delhi: 28.6469, 77.3160) | Point station lat/long (100–300m radius) | ~11 km grid resolution | 9 Indian Metro Urban Centers |
+| **Spatial Resolution** | Point coordinates (e.g. Anand Vihar, Delhi: 28.6469, 77.3160) | Point station lat/long (100–300m radius) | ~45 km grid resolution (CAMS Global ~0.4°) | 9 Indian Metro Urban Centers |
 | **Provenance Label** | `MEASURED_STATION` | `MEASURED_STATION` | `ATMOSPHERIC_MODEL_FORECAST` | `DEMO_RECORD` |
 
 ---
@@ -72,13 +72,14 @@ This audit assesses the technical availability, licensing, rate limits, latency,
 
 ## 5. Open-Meteo Atmospheric Chemistry Model Audit
 
-- **Endpoint:** `https://air-quality-api.open-meteo.com/v1/air_quality`
-- **Underlying Models:** ECMWF Copernicus Atmosphere Monitoring Service (CAMS) global atmospheric model and SILAM regional dispersion models.
+- **Endpoint:** `https://air-quality-api.open-meteo.com/v1/air-quality`
+- **Underlying Model:** ECMWF Copernicus Atmosphere Monitoring Service (CAMS Global, IFS-AER) at ~45 km spatial resolution (~0.4° grid). The European regional 11 km ensemble model does not extend to the Indian subcontinent, and SILAM is not used for India.
+- **Temporal Resolution:** Underlying CAMS Global steps occur at 3-hourly intervals, which Open-Meteo interpolates into 1-hour intervals in its API. BreatheWise transparently discloses that hourly forecast values represent API-interpolated steps, not 24 independent hourly model runs.
 - **Coverage:** Global continuous gridded model.
 - **Distinction from CPCB Station:**
   - Open-Meteo forecasts surface concentrations through mathematical chemical-transport equations, satellite data assimilation, and meteorological boundary conditions.
   - It does **not** read physical particulate filters or optical sensors in real-time.
-  - **BreatheWise Disclosure Enforcement:** The UI prominently shows the `ATMOSPHERIC MODEL (ECMWF CAMS)` badge whenever Open-Meteo data is loaded. The diurnal curves for 24-hour routine planning are clearly described as *atmospheric model forecasts*, never as measured ground telemetry.
+  - **BreatheWise Disclosure Enforcement:** The UI prominently displays the `ATMOSPHERIC MODEL (ECMWF CAMS ~45 km)` badge whenever Open-Meteo data is loaded. The diurnal curves for 24-hour routine planning are clearly described as *atmospheric model forecasts*, never as measured ground telemetry.
 
 ---
 

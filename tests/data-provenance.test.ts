@@ -19,6 +19,9 @@ describe('Data Provenance & Open-Meteo Parser Suite', () => {
 
     expect(parsed.provenance.type).toBe('ATMOSPHERIC_MODEL_FORECAST');
     expect(parsed.provenance.spatialResolution).toContain('~45 km');
+    expect(parsed.provenance.spatialResolution).toContain('IFS-AER');
+    expect(parsed.provenance.temporalResolution).toContain('3-hourly underlying model resolution');
+    expect(parsed.provenance.temporalResolution).toContain('not 24 independent hourly model runs');
     expect(parsed.provenance.isAveraged24h).toBe(false);
     expect(parsed.forecast24h.length).toBe(3);
   });

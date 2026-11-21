@@ -273,7 +273,7 @@ export default function IndoorCoachPage() {
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <span>Keep windows closed when ambient AQI &gt; 120 or during heavy traffic hours.</span>
+                  <span><strong>Application Behavioral Heuristic:</strong> Keep windows closed when outdoor PM2.5 &gt; 120 µg/m³ (derived from CPCB Poor-to-Very Poor boundary) or during heavy traffic peaks. Note: This window-sealing threshold is an application-level household guideline, not an official statutory standard.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0" />

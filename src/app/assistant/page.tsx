@@ -28,6 +28,13 @@ interface ChatMessage {
   structuredPoints?: string[];
   caveats?: string[];
   timestamp: string;
+  providerMeta?: {
+    provider: string;
+    model: string;
+    fallbackUsed: boolean;
+    success: boolean;
+    errorCategory: string | null;
+  };
 }
 
 const QUICK_PROMPT_CHIPS = [
@@ -113,6 +120,7 @@ export default function AssistantPage() {
           structuredPoints: payload.actionChecklist.map((item) => `${item.action} (${item.scientificReason})`),
           caveats: [payload.disclaimer],
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          providerMeta: payload.providerMeta,
         };
         setMessages((prev) => [...prev, botMsg]);
       } else {
@@ -132,6 +140,13 @@ export default function AssistantPage() {
         ],
         caveats: ['Running in resilient offline mode based on CPCB deterministic rules.'],
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        providerMeta: {
+          provider: 'Deterministic Grounded Engine',
+          model: 'deterministic-rules-v1',
+          fallbackUsed: true,
+          success: false,
+          errorCategory: 'NETWORK_OR_OFFLINE',
+        },
       };
       setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
@@ -202,6 +217,22 @@ export default function AssistantPage() {
                 <div className="flex-1 bg-slate-50/90 rounded-3xl rounded-tl-xs p-5 sm:p-6 border border-slate-200/70 shadow-xs">
                   <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
                     <div className="flex-1 space-y-3">
+                      {msg.providerMeta && (
+                        <div className="flex flex-wrap items-center gap-2 pb-1">
+                          {!msg.providerMeta.fallbackUsed ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              <Sparkles className="w-3 h-3 text-emerald-600" />
+                              Live Gemini Generation ({msg.providerMeta.model})
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                              <ShieldCheck className="w-3 h-3 text-amber-600" />
+                              Deterministic Grounded Engine ({msg.providerMeta.errorCategory || 'Resilient Fallback'})
+                            </span>
+                          )}
+                        </div>
+                      )}
+
                       <p className="text-xs sm:text-sm font-bold text-slate-900 leading-relaxed">
                         {msg.text}
                       </p>

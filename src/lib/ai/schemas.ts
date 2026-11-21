@@ -4,6 +4,16 @@
 
 import { z } from 'zod';
 
+export const ProviderMetaSchema = z.object({
+  provider: z.string(),
+  model: z.string(),
+  fallbackUsed: z.boolean(),
+  success: z.boolean(),
+  errorCategory: z.string().nullable(),
+});
+
+export type ProviderMeta = z.infer<typeof ProviderMetaSchema>;
+
 export const AIAssistantResponseSchema = z.object({
   reply: z.string().min(10, 'Reply must be substantial and helpful'),
   groundedFactors: z.object({
@@ -24,6 +34,7 @@ export const AIAssistantResponseSchema = z.object({
     })
   ).min(1, 'At least one action recommendation must be provided'),
   disclaimer: z.string(),
+  providerMeta: ProviderMetaSchema.optional(),
 });
 
 export type AIAssistantResponse = z.infer<typeof AIAssistantResponseSchema>;

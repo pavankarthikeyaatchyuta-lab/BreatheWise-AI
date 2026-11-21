@@ -112,5 +112,12 @@ export function generateDeterministicAssistantResponse(
     actionChecklist,
     disclaimer:
       'Grounded Assistant Notice: BreatheWise AI provides evidence-based environmental decision support. It does not provide medical diagnoses or replace licensed clinical healthcare advice.',
+    providerMeta: {
+      provider: 'Deterministic Grounded Engine',
+      model: 'deterministic-rules-v1',
+      fallbackUsed: true,
+      success: false,
+      errorCategory: 'DETERMINISTIC_FALLBACK',
+    },
   };
 }

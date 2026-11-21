@@ -13,6 +13,7 @@ describe('Dynamic Indoor Air Quality Coach Suite', () => {
     expect(guidance.ventilationAdvisor.canVentilateNow).toBe(false);
     expect(guidance.ventilationAdvisor.recommendedAction).toBe('KEEP_WINDOWS_SEALED');
     expect(guidance.ventilationAdvisor.explanation).toContain('Keep all exterior windows, doors, and balcony vents tightly closed');
+    expect(guidance.ventilationAdvisor.explanation).toContain('Application Behavioral Heuristic');
   });
 
   it('permits CROSS_VENTILATE_FREELY when outdoor air quality is favorable (<60 µg/m³)', () => {

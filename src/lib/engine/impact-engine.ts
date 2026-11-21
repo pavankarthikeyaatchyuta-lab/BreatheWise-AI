@@ -61,10 +61,10 @@ export function calculateExplainableImpact(
       adaptedFactor: `${altFactor.co2e_g_per_pkm} g CO₂e/passenger-km (${altFactor.name})`,
       distance: `${distanceKm} km (one-way journey)`,
       occupancy: `Baseline: ${baseFactor.occupancy} pax | Adapted: ${altFactor.occupancy} pax`,
-      gridFactor: '0.716 kg CO₂/kWh (Central Electricity Authority Baseline Database v19 for Indian National Grid, FY 2022-23; CEA Annual Report 2024-25 benchmark: 0.727 tCO₂/MWh for FY 2023-24)',
+      gridFactor: '0.675 kg CO₂/kWh (Central Electricity Authority CO₂ Baseline Database Version 22.0, August 2026, Weighted Average for FY 2025-26 including RES and captive injection, adjusted for cross-border transfers)',
     },
     sourceCitation:
-      'Central Electricity Authority (CEA) CO₂ Baseline Database for Indian Power Sector (v19, 2024, FY 2022-23: 0.716 tCO₂/MWh; FY 2023-24: 0.727 tCO₂/MWh) & ARAI / BEE Fuel Economy Standards.',
+      'Central Electricity Authority (CEA) CO₂ Baseline Database for the Indian Power Sector (Version 22.0, August 2026, Weighted Average for FY 2025-26: 0.675 tCO₂/MWh; compared with v19 FY 2022-23: 0.716 tCO₂/MWh and CEA Annual Report FY 2023-24: 0.727 tCO₂/MWh) & ARAI / BEE Fuel Economy Standards.',
   };
 
   // Calculation Proof Modal Metadata
@@ -75,7 +75,7 @@ export function calculateExplainableImpact(
     assumptions: [
       `Trip Distance: Exactly ${distanceKm} km per single journey.`,
       `Occupancy normalization: Solo car assumes 1 driver (occupancy = 1); Metro assumes high urban peak load factors; Carpool assumes 4 passengers sharing fuel.`,
-      `Electricity Grid Factor: Electric Metro and E-Bus lifecycle carbon calculations incorporate the official Indian grid emissions intensity factor (0.716 kg CO₂/kWh from CEA Baseline Database v19 for FY 2022-23; referenced alongside CEA Annual Report 2024-25 benchmark of 0.727 tCO₂/MWh for FY 2023-24) published by the Central Electricity Authority.`,
+      `Electricity Grid Factor: Electric Metro and E-Bus lifecycle carbon calculations incorporate the official Indian grid emissions intensity factor (0.675 kg CO₂/kWh from CEA CO₂ Baseline Database Version 22.0, August 2026, Weighted Average for FY 2025-26 including renewable generation and captive power injection, adjusted for cross-border electricity transfers) published by the Central Electricity Authority. Historical benchmarks: FY 2022-23 was 0.716 kg CO₂/kWh (v19) and FY 2023-24 was 0.727 tCO₂/MWh.`,
       `Exposure distinction: Shifted hours represent rescheduling of outdoor activities to periods where ambient PM2.5 drops by at least 35% during afternoon boundary layer expansion.`,
     ],
     formulas: [
@@ -85,7 +85,7 @@ export function calculateExplainableImpact(
     ],
     citations: [
       'Central Pollution Control Board (CPCB) — National Air Quality Index Technical Report (NAQI Breakpoints & Averaging Standards).',
-      'Central Electricity Authority (CEA) — CO₂ Baseline Database for the Indian Power Sector, Version 19.0 (June 2024, FY 2022-23: 0.716 tCO₂/MWh) and CEA Annual Report 2024-25 (FY 2023-24: 0.727 tCO₂/MWh).',
+      'Central Electricity Authority (CEA) — CO₂ Baseline Database for the Indian Power Sector, Version 22.0 (August 2026, Weighted Average for FY 2025-26: 0.675 tCO₂/MWh; compared with v19 FY 2022-23: 0.716 tCO₂/MWh and FY 2023-24: 0.727 tCO₂/MWh).',
       'Automotive Research Association of India (ARAI) — Emission Factor Reference Database for Indian Vehicles (BS-IV & BS-VI).',
       'Commission for Air Quality Management in NCR & Adjoining Areas (CAQM) — Statutory Graded Response Action Plan (GRAP) Notifications.',
     ],
