@@ -12,7 +12,7 @@
 | Deliverable | Status | Public URL / Location | Notes |
 | :--- | :--- | :--- | :--- |
 | **1. GitHub Public Repository** | **COMPLETED & SYNCED** | [https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI) | Tracking `origin/main`. Full source code, test suites, and documentation. |
-| **2. Public Deployed Application Link** | **READY FOR VERCEL LINK** | `https://breathewise-ai.vercel.app` (or user's deployed Vercel domain) | Configured with Next.js 15 App Router, zero build errors, production optimized. |
+| **2. Public Deployed Application Link** | **LIVE & OPERATIONAL** | [https://breathe-wise-ai-ivxy.vercel.app/](https://breathe-wise-ai-ivxy.vercel.app/) | Deployed on Vercel Edge (`bom1` Mumbai region). Next.js 15 App Router, zero build errors, production optimized. |
 | **3. Video Demonstration (3-min)** | **SCRIPT & RECORDING SEQUENCE READY** | `docs/VIDEO_DEMO_SCRIPT.md` & `docs/SCREEN_RECORDING_SEQUENCE.md` | Follows 3-minute video sequence with timestamps and scenario walkthroughs. |
 | **4. LinkedIn Post & Outline** | **DRAFT READY** | `docs/LINKEDIN_POST_OUTLINE.md` | Prepared with hashtags, feature highlights, and repository citations. |
 

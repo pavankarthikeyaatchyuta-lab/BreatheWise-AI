@@ -2,11 +2,15 @@
 ### An Intelligent, Family-First Urban Air Quality and Sustainable Living Assistant
 **PromptWars Virtual Challenge 6: Urban Air Quality Assistant**
 
-[![Test Suite](https://img.shields.io/badge/Vitest-60%2F60%20Passing-brightgreen.svg)](#testing-and-verification)
+[![Test Suite](https://img.shields.io/badge/Vitest-86%2F86%20Passing-brightgreen.svg)](#testing-and-verification)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%20Verified-blue.svg)](#technical-architecture)
 [![CPCB Compliance](https://img.shields.io/badge/CPCB%20NAQI-8%20Pollutants%20Verified-emerald.svg)](#1-official-cpcb-8-pollutant-naqi-engine)
 [![CAQM GRAP](https://img.shields.io/badge/CAQM%20GRAP-Stages%20I--IV%20Compliant-rose.svg)](#6-community--school-action-hub)
 [![Zero Fake Sensors](https://img.shields.io/badge/Scientific%20Integrity-Zero%20Fake%20Sensors-amber.svg)](#3-dynamic-indoor-air-quality-coach)
+[![Live Demo](https://img.shields.io/badge/Production%20Deployment-Vercel%20Live-success.svg)](https://breathe-wise-ai-ivxy.vercel.app/)
+
+**Live Application:** [https://breathe-wise-ai-ivxy.vercel.app/](https://breathe-wise-ai-ivxy.vercel.app/)  
+**GitHub Repository:** [https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI)
 
 ---
 
