@@ -179,7 +179,17 @@ Respond with a JSON object with this exact structure:
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
+
+    // 7-second timeout to quickly fall back to deterministic engine if upstream model is experiencing high demand (503)
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => {
+        const timeoutErr = new Error('Upstream model response timed out or overloaded (503)');
+        (timeoutErr as { status?: number }).status = 503;
+        reject(timeoutErr);
+      }, 7000)
+    );
+
+    const generatePromise = ai.models.generateContent({
       model: modelName,
       contents: prompt,
       config: {
@@ -187,6 +197,8 @@ Respond with a JSON object with this exact structure:
         responseMimeType: 'application/json',
       },
     });
+
+    const response = await Promise.race([generatePromise, timeoutPromise]);
 
     const responseText = response.text;
     if (!responseText) {

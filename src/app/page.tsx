@@ -60,6 +60,73 @@ export default function DashboardPage() {
     { label: 'Severe', range: '401-500', color: 'bg-rose-900' },
   ];
 
+  // Dynamic 24-Hour Diurnal Forecast Engine
+  const forecastList = aqiData.forecast24h && aqiData.forecast24h.length > 0 ? aqiData.forecast24h : [
+    { time: '06:00', pm25: 65, pm10: 110, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: true, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
+    { time: '09:00', pm25: 55, pm10: 95, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
+    { time: '12:00', pm25: 42, pm10: 75, estimatedCategory: 'Good' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'MODERATE_OUTDOORS' as const, isoTimestamp: '' },
+    { time: '15:00', pm25: 38, pm10: 68, estimatedCategory: 'Good' as const, isPeakSmogWindow: false, isRelativeLowWindow: true, activityRecommendation: 'MODERATE_OUTDOORS' as const, isoTimestamp: '' },
+    { time: '18:00', pm25: 58, pm10: 102, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
+    { time: '21:00', pm25: 72, pm10: 125, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: true, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
+  ];
+
+  const maxForecastPm = Math.max(...forecastList.map((f) => f.pm25), 50);
+  const yCeiling = maxForecastPm > 300 ? 400 : maxForecastPm > 200 ? 300 : maxForecastPm > 100 ? 200 : 100;
+
+  let peakForecast = forecastList[0];
+  let lowForecast = forecastList[0];
+  forecastList.forEach((f) => {
+    if (f.pm25 > peakForecast.pm25) peakForecast = f;
+    if (f.pm25 < lowForecast.pm25) lowForecast = f;
+  });
+
+  // Calculate coordinates for SVG: viewBox 0 0 600 160
+  // Left: 32, Right: 575 (width 543)
+  // Baseline: 145, Top: 25 (height 120)
+  const chartPoints = forecastList.map((f, idx) => {
+    const x = 32 + (idx / Math.max(forecastList.length - 1, 1)) * 543;
+    const ratio = Math.min(Math.max(f.pm25 / yCeiling, 0.05), 0.95);
+    const y = 145 - ratio * 120;
+    return { x, y, ...f };
+  });
+
+  // Smooth spline curve
+  let curvePath = '';
+  if (chartPoints.length > 0) {
+    curvePath = `M ${chartPoints[0].x.toFixed(1)},${chartPoints[0].y.toFixed(1)}`;
+    for (let i = 0; i < chartPoints.length - 1; i++) {
+      const p0 = chartPoints[i];
+      const p1 = chartPoints[i + 1];
+      const mx = (p0.x + p1.x) / 2;
+      curvePath += ` C ${mx.toFixed(1)},${p0.y.toFixed(1)} ${mx.toFixed(1)},${p1.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+    }
+  }
+
+  const lastPoint = chartPoints[chartPoints.length - 1] || { x: 575, y: 145 };
+  const firstPoint = chartPoints[0] || { x: 32, y: 145 };
+  const areaPath = curvePath ? `${curvePath} L ${lastPoint.x.toFixed(1)},150 L ${firstPoint.x.toFixed(1)},150 Z` : '';
+
+  // Find morning peak (first half) and evening peak (second half)
+  const midIdx = Math.floor(chartPoints.length / 2);
+  let morningPeak = chartPoints[0];
+  for (let i = 0; i <= midIdx; i++) {
+    if (chartPoints[i].pm25 > morningPeak.pm25) morningPeak = chartPoints[i];
+  }
+  let eveningPeak = chartPoints[midIdx] || chartPoints[0];
+  for (let i = midIdx; i < chartPoints.length; i++) {
+    if (chartPoints[i].pm25 > eveningPeak.pm25) eveningPeak = chartPoints[i];
+  }
+
+  // Dynamic stroke color based on peak severity
+  const strokeColor =
+    peakForecast.pm25 > 250
+      ? '#dc2626'
+      : peakForecast.pm25 > 120
+      ? '#ea580c'
+      : peakForecast.pm25 > 60
+      ? '#f59e0b'
+      : '#10b981';
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {locationNotice && (
@@ -270,10 +337,10 @@ export default function DashboardPage() {
               {/* Inversion Peak vs Midday Low Indicators */}
               <div className="flex items-center gap-2 text-[10px] font-bold">
                 <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
-                  Peak: 8 AM
+                  Peak: {peakForecast.time} ({Math.round(peakForecast.pm25)} µg/m³)
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Lowest: 2-3 PM
+                  Lowest: {lowForecast.time} ({Math.round(lowForecast.pm25)} µg/m³)
                 </span>
               </div>
             </div>
@@ -285,66 +352,81 @@ export default function DashboardPage() {
                   {/* Gradient definition */}
                   <defs>
                     <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f97316" stopOpacity="0.4" />
-                      <stop offset="60%" stopColor="#10b981" stopOpacity="0.15" />
+                      <stop offset="0%" stopColor={strokeColor} stopOpacity="0.35" />
+                      <stop offset="60%" stopColor="#10b981" stopOpacity="0.12" />
                       <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
-                  {/* Y-axis Ticks */}
-                  <text x="5" y="32" fill="#94a3b8" fontSize="9" fontWeight="bold">400</text>
-                  <text x="5" y="77" fill="#94a3b8" fontSize="9" fontWeight="bold">300</text>
-                  <text x="5" y="122" fill="#94a3b8" fontSize="9" fontWeight="bold">200</text>
-                  <text x="5" y="152" fill="#94a3b8" fontSize="9" fontWeight="bold">100</text>
+                  {/* Dynamic Y-axis Ticks */}
+                  <text x="5" y="28" fill="#94a3b8" fontSize="9" fontWeight="bold">{yCeiling}</text>
+                  <text x="5" y="68" fill="#94a3b8" fontSize="9" fontWeight="bold">{Math.round(yCeiling * 0.75)}</text>
+                  <text x="5" y="108" fill="#94a3b8" fontSize="9" fontWeight="bold">{Math.round(yCeiling * 0.5)}</text>
+                  <text x="5" y="148" fill="#94a3b8" fontSize="9" fontWeight="bold">{Math.round(yCeiling * 0.25)}</text>
 
                   {/* Gridlines */}
-                  <line x1="28" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
-                  <line x1="28" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
-                  <line x1="28" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="25" x2="590" y2="25" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="65" x2="590" y2="65" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="105" x2="590" y2="105" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="145" x2="590" y2="145" stroke="#f1f5f9" strokeDasharray="4" />
 
-                  {/* Area fill */}
-                  <path
-                    d="M28,80 Q85,40 150,30 T300,110 T450,35 T600,75 L600,160 L28,160 Z"
-                    fill="url(#forecastGrad)"
-                  />
+                  {/* Dynamic Area fill */}
+                  {areaPath && <path d={areaPath} fill="url(#forecastGrad)" />}
 
-                  {/* Smooth Curve */}
-                  <path
-                    d="M28,80 Q85,40 150,30 T300,110 T450,35 T600,75"
-                    fill="none"
-                    stroke="#ea580c"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                  />
+                  {/* Dynamic Smooth Curve */}
+                  {curvePath && (
+                    <path
+                      d={curvePath}
+                      fill="none"
+                      stroke={strokeColor}
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                    />
+                  )}
 
-                  {/* Morning Spike Badge Floating Above Peak 1 */}
-                  <g transform="translate(115, 6)">
-                    <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
-                    <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Morning Spike</text>
-                  </g>
+                  {/* Morning Spike Badge Floating Above Morning Peak */}
+                  {morningPeak && (
+                    <g transform={`translate(${Math.max(morningPeak.x - 35, 32)}, ${Math.max(morningPeak.y - 24, 6)})`}>
+                      <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
+                      <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Morning Spike</text>
+                    </g>
+                  )}
 
-                  {/* Evening Spike Badge Floating Above Peak 2 */}
-                  <g transform="translate(415, 11)">
-                    <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
-                    <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Evening Spike</text>
-                  </g>
+                  {/* Evening Spike Badge Floating Above Evening Peak */}
+                  {eveningPeak && (
+                    <g transform={`translate(${Math.min(eveningPeak.x - 35, 500)}, ${Math.max(eveningPeak.y - 24, 6)})`}>
+                      <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
+                      <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Evening Spike</text>
+                    </g>
+                  )}
 
-                  {/* Peak 1 Point: Morning Spike */}
-                  <circle cx="150" cy="30" r="4.5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
-                  {/* Lowest Point: Midday Expansion */}
-                  <circle cx="300" cy="110" r="4.5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
-                  {/* Peak 2 Point: Evening Spike */}
-                  <circle cx="450" cy="35" r="4.5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                  {/* Dynamic Circles on Peak & Low Points */}
+                  {morningPeak && (
+                    <circle cx={morningPeak.x} cy={morningPeak.y} r="4.5" fill={strokeColor} stroke="#ffffff" strokeWidth="2" />
+                  )}
+                  {lowForecast && (
+                    <circle
+                      cx={chartPoints.find((p) => p.time === lowForecast.time)?.x ?? 300}
+                      cy={chartPoints.find((p) => p.time === lowForecast.time)?.y ?? 110}
+                      r="4.5"
+                      fill="#10b981"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+                  )}
+                  {eveningPeak && (
+                    <circle cx={eveningPeak.x} cy={eveningPeak.y} r="4.5" fill={strokeColor} stroke="#ffffff" strokeWidth="2" />
+                  )}
                 </svg>
 
-                {/* Time Labels on X-axis matching Reference Image */}
+                {/* Dynamic Time Labels on X-axis */}
                 <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-4">
-                  <span>6 AM</span>
-                  <span>9 AM</span>
-                  <span>12 PM</span>
-                  <span>3 PM</span>
-                  <span>6 PM</span>
-                  <span>9 PM</span>
+                  {chartPoints.length >= 6
+                    ? [0, 1, 2, 3, 4, 5].map((idx) => {
+                        const ptIdx = Math.floor((idx / 5) * (chartPoints.length - 1));
+                        return <span key={idx}>{chartPoints[ptIdx]?.time || ''}</span>;
+                      })
+                    : ['6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'].map((t) => <span key={t}>{t}</span>)}
                 </div>
               </div>
 
