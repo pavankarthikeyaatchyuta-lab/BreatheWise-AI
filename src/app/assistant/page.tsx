@@ -66,15 +66,15 @@ export default function AssistantPage() {
     {
       id: 'm-sample-bot',
       sender: 'assistant',
-      text: `Based on today's air quality in ${aqiState.city} (AQI ${aqi} • Moderate to Poor, dominant: ${dominant}):`,
+      text: `Based on today's forecast for ${aqiState.city}:`,
       structuredPoints: [
-        "It's strongly advised to avoid prolonged or strenuous outdoor play, especially for young children and asthmatic family members.",
-        "Plan indoor activities instead (board games, drawing, story reading, or indoor stretching).",
-        "If outdoor time is essential, limit it to ≤ 15 minutes during the afternoon (2:00 – 4:00 PM) when boundary-layer mixing temporarily lowers surface particulate density.",
-        "Prioritize keeping children indoors in low-activity filtered environments during elevated smog. Masks designed for adults do not achieve reliable seals on pediatric facial anatomy and cannot substitute for reducing outdoor exposure."
+        "Evening AQI is expected to be ~220 (Poor).",
+        "It's better to avoid outdoor play today.",
+        "Consider indoor activities like yoga, dance or board games.",
+        "If outdoor time is essential, limit it to ≤ 15 minutes. Note: Prioritize keeping children indoors in filtered environments during poor conditions, as masks designed for adults do not achieve reliable pediatric seals."
       ],
       caveats: [
-        "Medical Disclaimer: BreatheWise AI provides environmental lifestyle guidance, not individualized clinical diagnoses. Consult your pediatrician for personal respiratory action plans."
+        "Medical Disclaimer: BreatheWise AI provides environmental lifestyle guidance, not clinical diagnoses. Follow your pediatrician's personalized guidance."
       ],
       timestamp: '5:16 PM',
     },
@@ -164,10 +164,10 @@ export default function AssistantPage() {
             <span>AI Assistant</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            BreatheWise AI Assistant
+            AI Assistant
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Your personalized, grounded guide for air quality, health and daily choices.
+            Your personal, contextual air quality &amp; lifestyle guide
           </p>
         </div>
 

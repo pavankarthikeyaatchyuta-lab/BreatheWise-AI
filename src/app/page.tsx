@@ -205,42 +205,42 @@ export default function DashboardPage() {
             {/* 4 Actionable Items (Reference Style with green icons) */}
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Home className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                  <strong className="text-slate-800 block">Prefer indoor activities</strong>
-                  <span className="text-[11px] text-slate-500">Morning & late evening thermal inversions trap surface PM2.5.</span>
+                  <strong className="text-slate-800 block text-xs font-bold">Prefer indoor activities (morning &amp; late evening)</strong>
+                  <span className="text-[11px] text-slate-500">Thermal inversions concentrate aerosols at ground level.</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                  <strong className="text-slate-800 block">Use an N95/FFP2 respirator</strong>
-                  <span className="text-[11px] text-slate-500">Mandatory facial seal protection for two-wheeler commuters.</span>
+                  <strong className="text-slate-800 block text-xs font-bold">Use a mask (N95/KN95) if you&apos;re outdoors</strong>
+                  <span className="text-[11px] text-slate-500">Mandatory certified seal for adult outdoor transit.</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Wind className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                  <strong className="text-slate-800 block">Keep windows closed now</strong>
-                  <span className="text-[11px] text-slate-500">Outdoor PM2.5 is high; ventilate only during the midday dip.</span>
+                  <strong className="text-slate-800 block text-xs font-bold">Keep windows closed (AQI is high)</strong>
+                  <span className="text-[11px] text-slate-500">Ventilate only during the midday planetary boundary expansion.</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#f7faf8] border border-emerald-50 hover:border-emerald-200 transition-colors">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shrink-0">
                   <Car className="w-4 h-4" />
                 </div>
                 <div className="text-xs">
-                  <strong className="text-slate-800 block">Choose public transport or carpool</strong>
-                  <span className="text-[11px] text-slate-500">Metro coaches provide HVAC particulate filtration.</span>
+                  <strong className="text-slate-800 block text-xs font-bold">Choose public transport or carpool</strong>
+                  <span className="text-[11px] text-slate-500">Rapid rail transit provides HVAC particulate pre-filtration.</span>
                 </div>
               </div>
             </div>
@@ -256,14 +256,14 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Row 2: Pollutant Concentrations (µg/m³) + 24-Hour Forecast Curve */}
+      {/* Row 2: Pollutant Levels (µg/m³) + 24-Hour Forecast Curve */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Pollutant Concentrations (5 cols) */}
+        {/* Pollutant Levels (5 cols) */}
         <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
               <h2 className="text-sm font-bold text-slate-800 tracking-tight">
-                Pollutant Concentrations (µg/m³)
+                Pollutant Levels (µg/m³)
               </h2>
               <span className="text-[11px] text-slate-400 font-medium">
                 8 Criteria Pollutants
@@ -346,42 +346,60 @@ export default function DashboardPage() {
                     </linearGradient>
                   </defs>
 
+                  {/* Y-axis Ticks */}
+                  <text x="5" y="32" fill="#94a3b8" fontSize="9" fontWeight="bold">400</text>
+                  <text x="5" y="77" fill="#94a3b8" fontSize="9" fontWeight="bold">300</text>
+                  <text x="5" y="122" fill="#94a3b8" fontSize="9" fontWeight="bold">200</text>
+                  <text x="5" y="152" fill="#94a3b8" fontSize="9" fontWeight="bold">100</text>
+
                   {/* Gridlines */}
-                  <line x1="0" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
-                  <line x1="0" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
-                  <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeDasharray="4" />
+                  <line x1="28" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeDasharray="4" />
 
                   {/* Area fill */}
                   <path
-                    d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75 L600,160 L0,160 Z"
+                    d="M28,80 Q85,40 150,30 T300,110 T450,35 T600,75 L600,160 L28,160 Z"
                     fill="url(#forecastGrad)"
                   />
 
                   {/* Smooth Curve */}
                   <path
-                    d="M0,80 Q75,35 150,25 T300,110 T450,30 T600,75"
+                    d="M28,80 Q85,40 150,30 T300,110 T450,35 T600,75"
                     fill="none"
                     stroke="#ea580c"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                   />
 
+                  {/* Morning Spike Badge Floating Above Peak 1 */}
+                  <g transform="translate(115, 6)">
+                    <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
+                    <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Morning Spike</text>
+                  </g>
+
+                  {/* Evening Spike Badge Floating Above Peak 2 */}
+                  <g transform="translate(415, 11)">
+                    <rect width="70" height="18" rx="6" fill="#fef2f2" stroke="#f87171" strokeWidth="1" />
+                    <text x="35" y="12" fill="#dc2626" fontSize="8" fontWeight="bold" textAnchor="middle">Evening Spike</text>
+                  </g>
+
                   {/* Peak 1 Point: Morning Spike */}
-                  <circle cx="150" cy="25" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                  <circle cx="150" cy="30" r="4.5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
                   {/* Lowest Point: Midday Expansion */}
-                  <circle cx="300" cy="110" r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                  <circle cx="300" cy="110" r="4.5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
                   {/* Peak 2 Point: Evening Spike */}
-                  <circle cx="450" cy="30" r="5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
+                  <circle cx="450" cy="35" r="4.5" fill="#ea580c" stroke="#ffffff" strokeWidth="2" />
                 </svg>
 
-                {/* Time Labels on X-axis */}
-                <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-1">
-                  <span>12 AM</span>
-                  <span>4 AM</span>
-                  <span className="text-rose-600 font-extrabold">8 AM (Spike)</span>
-                  <span className="text-emerald-700 font-extrabold">12 PM - 3 PM (Low)</span>
-                  <span className="text-rose-600 font-extrabold">8 PM (Spike)</span>
-                  <span>11 PM</span>
+                {/* Time Labels on X-axis matching Reference Image */}
+                <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1 px-4">
+                  <span>6 AM</span>
+                  <span>9 AM</span>
+                  <span>12 PM</span>
+                  <span>3 PM</span>
+                  <span>6 PM</span>
+                  <span>9 PM</span>
                 </div>
               </div>
 

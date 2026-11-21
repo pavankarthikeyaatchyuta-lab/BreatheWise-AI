@@ -113,23 +113,19 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
               As per Commission for Air Quality Management (CAQM) order. Mandated for Delhi and NCR districts only.
             </p>
 
-            {/* Key Actions List */}
+            {/* Key Actions List (matching reference image) */}
             <ul className="space-y-2 text-xs text-slate-700 font-medium mb-6">
               <li className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Enhanced mechanical road sweeping &amp; water sprinkling</span>
+                <span>Enhanced dust control</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Strict enforcement on construction dust &amp; demolition sites</span>
+                <span>Check on construction activities</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Encourage public transport; hike parking fees to disincentivize private cars</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Provide electric heaters to security staff to avert open burning</span>
+                <span>Restrict high-polluting vehicles</span>
               </li>
             </ul>
           </div>

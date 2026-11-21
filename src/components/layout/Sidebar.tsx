@@ -69,19 +69,16 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 relative group',
+                  'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-150 relative group',
                   isActive
-                    ? 'bg-emerald-600/25 text-white border border-emerald-500/40 shadow-sm shadow-emerald-950/20'
-                    : 'text-emerald-100/70 hover:text-white hover:bg-emerald-800/30'
+                    ? 'bg-[#188050] text-white font-bold shadow-md shadow-emerald-950/30'
+                    : 'text-emerald-100/75 hover:text-white hover:bg-emerald-800/30 font-medium'
                 )}
               >
-                {isActive && (
-                  <span className="absolute left-0 top-2 bottom-2 w-1 bg-emerald-400 rounded-r-full" />
-                )}
                 <Icon
                   className={cn(
-                    'w-4 h-4 transition-transform group-hover:scale-110',
-                    isActive ? 'text-emerald-400' : 'text-emerald-300/70 group-hover:text-emerald-200'
+                    'w-4 h-4 transition-transform group-hover:scale-110 shrink-0',
+                    isActive ? 'text-white' : 'text-emerald-300/70 group-hover:text-emerald-200'
                   )}
                 />
                 <span>{t(item.transKey) || item.fallback}</span>
@@ -111,28 +108,36 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Vector Nature Skyline Graphic at bottom of sidebar (SVG) */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none opacity-20 overflow-hidden h-36">
+      {/* Vector Nature Skyline Graphic at bottom of sidebar (SVG matching reference image) */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none opacity-45 overflow-hidden h-44">
         <svg
-          viewBox="0 0 256 120"
+          viewBox="0 0 256 160"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full object-cover"
         >
-          {/* Layered trees and city skyline silhouette */}
-          <path
-            d="M0 120V95L15 90L25 98L40 85L50 92L65 80L80 95L95 78L110 90L130 75L145 88L160 70L175 85L190 74L205 88L220 72L235 84L256 70V120H0Z"
-            fill="#10b981"
-          />
-          <path
-            d="M0 120V105L20 100L35 106L55 96L70 102L90 92L105 102L125 90L145 98L165 88L185 96L205 85L225 95L256 86V120H0Z"
-            fill="#059669"
-          />
-          {/* Soft tree triangles */}
-          <polygon points="30,120 45,75 60,120" fill="#34d399" opacity="0.3" />
-          <polygon points="90,120 105,65 120,120" fill="#34d399" opacity="0.25" />
-          <polygon points="160,120 175,70 190,120" fill="#34d399" opacity="0.3" />
-          <polygon points="210,120 225,60 240,120" fill="#34d399" opacity="0.2" />
+          {/* Distant city skyline buildings */}
+          <rect x="25" y="65" width="18" height="95" fill="#10b981" opacity="0.35" />
+          <rect x="48" y="50" width="22" height="110" fill="#059669" opacity="0.3" />
+          <rect x="80" y="70" width="16" height="90" fill="#10b981" opacity="0.25" />
+          <rect x="110" y="45" width="24" height="115" fill="#047857" opacity="0.3" />
+          <rect x="145" y="60" width="20" height="100" fill="#10b981" opacity="0.3" />
+          <rect x="180" y="50" width="22" height="110" fill="#059669" opacity="0.3" />
+          <rect x="215" y="68" width="18" height="92" fill="#10b981" opacity="0.25" />
+
+          {/* Layered rounded trees and foliage */}
+          <ellipse cx="20" cy="140" rx="35" ry="25" fill="#065f46" />
+          <ellipse cx="65" cy="135" rx="30" ry="22" fill="#047857" />
+          <ellipse cx="110" cy="130" rx="38" ry="26" fill="#059669" />
+          <ellipse cx="160" cy="135" rx="32" ry="24" fill="#047857" />
+          <ellipse cx="205" cy="132" rx="36" ry="26" fill="#065f46" />
+          <ellipse cx="245" cy="140" rx="30" ry="22" fill="#047857" />
+
+          {/* Stylized tree cones / pines */}
+          <polygon points="40,150 55,95 70,150" fill="#34d399" opacity="0.4" />
+          <polygon points="95,150 110,85 125,150" fill="#6ee7b7" opacity="0.35" />
+          <polygon points="150,150 165,90 180,150" fill="#34d399" opacity="0.4" />
+          <polygon points="210,150 225,80 240,150" fill="#6ee7b7" opacity="0.35" />
         </svg>
       </div>
     </aside>

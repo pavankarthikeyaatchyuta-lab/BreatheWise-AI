@@ -198,7 +198,7 @@ export default function AlternativesPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  Compare Alternatives (per day, round-trip)
+                  Compare Alternatives (per day)
                 </h3>
                 <span className="text-xs text-slate-400">
                   Calculated for {distanceKm * 2} km total daily commute based on ARAI emission factors &amp; CEA grid factor
@@ -295,6 +295,10 @@ export default function AlternativesPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            <div className="text-[11px] text-slate-400 font-medium mt-2">
+              *Lower emissions, but avoid during high-AQI hours and heavy traffic.
             </div>
 
             {/* Exposure vs Emissions Honesty Notice */}

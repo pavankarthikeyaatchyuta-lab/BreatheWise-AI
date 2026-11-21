@@ -37,10 +37,10 @@ export default function ImpactPage() {
             <span>Explainable Impact Intelligence</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Explainable Impact Intelligence
+            Impact Intelligence
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Understand the real impact of your daily choices, with transparent calculations.
+            See the real impact of your choices, with transparent calculations
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export default function ImpactPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  Calculated Impact (Scenario vs. Baseline)
+                  Your Impact (Today vs. Baseline)
                 </h2>
                 <span className="text-[11px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-200 inline-block mt-0.5">
                   Modelled Estimates (ARAI &amp; CEA Database v22.0)

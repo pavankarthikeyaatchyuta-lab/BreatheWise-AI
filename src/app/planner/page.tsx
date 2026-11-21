@@ -48,11 +48,11 @@ export default function PlannerPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Smart Daily Routine Planner</span>
-            <span className="text-emerald-600 text-lg">✨</span>
+            <span>Daily Routine Planner</span>
+            <span className="text-emerald-600 text-lg">🍃</span>
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Personalized schedule for healthier, lower-exposure living.
+            A personalized, low-exposure schedule for your family
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function PlannerPage() {
         <div className="flex items-center gap-2">
           <div className="flex items-center bg-white border border-slate-200/80 rounded-full px-3.5 py-1.5 shadow-xs text-xs font-bold text-slate-800">
             <CalendarClock className="w-3.5 h-3.5 text-emerald-600 mr-2" />
-            <span>Today, {todayDateStr}</span>
+            <span>Today, 26 Jan</span>
           </div>
           <Link
             href="/assistant"
@@ -210,42 +210,51 @@ export default function PlannerPage() {
             </div>
 
             {/* Vertical Interactive Timeline (matching reference image) */}
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-emerald-200/80">
-              {/* Item 1: 6:30 AM */}
+            <div className="relative pl-7 space-y-6 before:absolute before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-emerald-200/80">
+              {/* Item 1: 7:00 AM */}
               <div className="relative group">
-                <div className="absolute -left-6 top-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[9px] font-bold">
+                <div className="absolute -left-7 top-1.5 w-6 h-6 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[10px] font-bold">
                   ✓
                 </div>
                 <div className="bg-[#f8faf9] p-4 rounded-2xl border border-slate-100 group-hover:border-emerald-300 transition-all">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
-                        6:30 AM
+                        7:00 AM
                       </span>
-                      <strong className="text-xs text-slate-900 font-bold">Indoor Exercise</strong>
+                      <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <Home className="w-3.5 h-3.5" />
+                      </div>
+                      <strong className="text-xs text-slate-900 font-bold">At Home</strong>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Shifted Indoor
+                      Indoor Shield
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Avoid outdoor workout (AQI high: 380 during ground inversion). Aerobic exertion increases tidal breathing volume up to 4×. Shifted to indoor yoga/stretching.
+                  <p className="text-xs text-slate-700 font-semibold mb-1">
+                    Keep windows closed • Use exhaust while cooking
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Avoid outdoor cardio workouts (AQI elevated during morning ground inversion). Run kitchen exhaust 2 min prior to cooking.
                   </p>
                 </div>
               </div>
 
-              {/* Item 2: 8:00 AM */}
+              {/* Item 2: 8:30 AM */}
               <div className="relative group">
-                <div className="absolute -left-6 top-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[9px] font-bold">
+                <div className="absolute -left-7 top-1.5 w-6 h-6 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[10px] font-bold">
                   ✓
                 </div>
                 <div className="bg-[#f8faf9] p-4 rounded-2xl border border-slate-100 group-hover:border-emerald-300 transition-all">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
-                        8:00 AM
+                        8:30 AM
                       </span>
-                      <strong className="text-xs text-slate-900 font-bold">School & Work Commute</strong>
+                      <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <Car className="w-3.5 h-3.5" />
+                      </div>
+                      <strong className="text-xs text-slate-900 font-bold">School Commute</strong>
                     </div>
                     {profile.primaryCommuteMode === 'TWO_WHEELER' && (
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
@@ -253,77 +262,98 @@ export default function PlannerPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Behavioral scheduling heuristic: Adjust departure by 15-20 min to reduce proximity to peak school drop-off idling exhaust. Prioritize enclosed transit and indoor alternatives for children (do not rely on adult masks for pediatric protection). Adult two-wheeler riders should wear a fitted N95 respirator.
+                  <p className="text-xs text-slate-700 font-semibold mb-1">
+                    Leave 15–20 min earlier • Prefer less congested route
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Behavioral scheduling heuristic: Shift departure to avoid peak school idling jams. Prioritize closed vehicle transit or rapid metro for children (adult masks do not achieve pediatric seal).
                   </p>
                 </div>
               </div>
 
-              {/* Item 3: 1:00 PM */}
+              {/* Item 3: 12:30 PM */}
               <div className="relative group">
-                <div className="absolute -left-6 top-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[9px] font-bold">
+                <div className="absolute -left-7 top-1.5 w-6 h-6 rounded-full bg-amber-400 ring-4 ring-amber-100 flex items-center justify-center text-white text-[10px] font-bold">
                   ✓
                 </div>
                 <div className="bg-[#f8faf9] p-4 rounded-2xl border border-slate-100 group-hover:border-emerald-300 transition-all">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
-                        1:00 PM
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-extrabold">
+                        12:30 PM
                       </span>
-                      <strong className="text-xs text-slate-900 font-bold">Lunch & Fresh Air Check</strong>
+                      <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                        <Utensils className="w-3.5 h-3.5" />
+                      </div>
+                      <strong className="text-xs text-slate-900 font-bold">Lunch &amp; Break</strong>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Relative Diurnal Low
+                      Diurnal Window
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Solar heating expands planetary boundary layer, dropping surface PM2.5. Best relative window (1:00 - 3:30 PM) for essential outdoor errands and brief 10-minute cross-ventilation.
+                  <p className="text-xs text-slate-700 font-semibold mb-1">
+                    Good time to step out • AQI ~132 (Moderate)
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Boundary layer expansion dilutes ground pollution. Best relative diurnal window for essential errands and brief controlled 10-minute home cross-ventilation.
                   </p>
                 </div>
               </div>
 
-              {/* Item 4: 5:00 PM */}
+              {/* Item 4: 4:30 PM */}
               <div className="relative group">
-                <div className="absolute -left-6 top-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[9px] font-bold">
+                <div className="absolute -left-7 top-1.5 w-6 h-6 rounded-full bg-orange-400 ring-4 ring-orange-100 flex items-center justify-center text-white text-[10px] font-bold">
                   ✓
                 </div>
                 <div className="bg-[#f8faf9] p-4 rounded-2xl border border-slate-100 group-hover:border-emerald-300 transition-all">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
-                        5:00 PM
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-900 text-[11px] font-extrabold">
+                        4:30 PM
                       </span>
+                      <div className="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center">
+                        <Dumbbell className="w-3.5 h-3.5" />
+                      </div>
                       <strong className="text-xs text-slate-900 font-bold">Evening Activity</strong>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
-                      Indoor Activity
+                      Indoor Exercise
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Evening inversion commences by 6:00 PM. Keep children&apos;s physical playtime indoors (board games, dance, reading) to minimize evening traffic pollution exposure.
+                  <p className="text-xs text-slate-700 font-semibold mb-1">
+                    Do indoor exercise today • AQI ~176 (Moderate)
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Evening inversion commences by 5:30 PM. Keep exercise indoors (yoga, core, or stationary workouts) to protect alveolar airways from early evening aerosol accumulation.
                   </p>
                 </div>
               </div>
 
-              {/* Item 5: 8:30 PM */}
+              {/* Item 5: 8:00 PM */}
               <div className="relative group">
-                <div className="absolute -left-6 top-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[9px] font-bold">
+                <div className="absolute -left-7 top-1.5 w-6 h-6 rounded-full bg-emerald-500 ring-4 ring-emerald-100 flex items-center justify-center text-white text-[10px] font-bold">
                   ✓
                 </div>
                 <div className="bg-[#f8faf9] p-4 rounded-2xl border border-slate-100 group-hover:border-emerald-300 transition-all">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
-                        8:30 PM
+                        8:00 PM
                       </span>
-                      <strong className="text-xs text-slate-900 font-bold">At Home / Kitchen Shield</strong>
+                      <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <Home className="w-3.5 h-3.5" />
+                      </div>
+                      <strong className="text-xs text-slate-900 font-bold">At Home</strong>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                       Sealed Windows
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Keep windows sealed tight. Run kitchen exhaust fan 2 mins before and 5 mins after cooking dinner. Isolate kitchen partition doors from bedrooms.
+                  <p className="text-xs text-slate-700 font-semibold mb-1">
+                    Ventilate briefly (if AQI &lt; 120) • Keep indoor air clean
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Keep windows tightly shut if outdoor PM2.5 is high. Run kitchen chimney during dinner preparation and isolate kitchen doors from bedroom quarters.
                   </p>
                 </div>
               </div>
