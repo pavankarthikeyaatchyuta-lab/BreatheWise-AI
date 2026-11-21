@@ -15,19 +15,29 @@ import {
   Leaf
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { useScenario } from '@/context/ScenarioContext';
+import { Translations } from '@/lib/i18n/translations';
 
-const NAV_ITEMS = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/planner', label: 'Daily Planner', icon: CalendarClock },
-  { href: '/indoor-coach', label: 'Indoor Coach', icon: Wind },
-  { href: '/alternatives', label: 'Alternatives', icon: ArrowLeftRight },
-  { href: '/impact', label: 'Impact Intelligence', icon: BarChart3 },
-  { href: '/community', label: 'Community Hub', icon: Users },
-  { href: '/assistant', label: 'AI Assistant', icon: Sparkles },
+interface NavItemConfig {
+  href: string;
+  transKey: keyof Translations;
+  fallback: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const NAV_ITEMS: NavItemConfig[] = [
+  { href: '/', transKey: 'navDashboard', fallback: 'Dashboard', icon: LayoutDashboard },
+  { href: '/planner', transKey: 'navPlanner', fallback: 'Daily Planner', icon: CalendarClock },
+  { href: '/indoor-coach', transKey: 'navIndoorCoach', fallback: 'Indoor Coach', icon: Wind },
+  { href: '/alternatives', transKey: 'navAlternatives', fallback: 'Alternatives', icon: ArrowLeftRight },
+  { href: '/impact', transKey: 'navImpact', fallback: 'Impact Intelligence', icon: BarChart3 },
+  { href: '/community', transKey: 'navCommunity', fallback: 'Community Hub', icon: Users },
+  { href: '/assistant', transKey: 'navAssistant', fallback: 'AI Assistant', icon: Sparkles },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t } = useScenario();
 
   return (
     <aside className="w-64 bg-[#0a3526] text-white flex flex-col justify-between shrink-0 min-h-screen relative overflow-hidden border-r border-[#0d4432] shadow-xl">
@@ -74,7 +84,7 @@ export function Sidebar() {
                     isActive ? 'text-emerald-400' : 'text-emerald-300/70 group-hover:text-emerald-200'
                   )}
                 />
-                <span>{item.label}</span>
+                <span>{t(item.transKey) || item.fallback}</span>
               </Link>
             );
           })}

@@ -14,9 +14,12 @@ export const AIAssistantResponseSchema = z.object({
   }),
   actionChecklist: z.array(
     z.object({
-      category: z.enum(['INDOOR', 'COMMUTE', 'SCHEDULE', 'COMMUNITY']),
+      category: z.enum(['INDOOR', 'COMMUTE', 'SCHEDULE', 'COMMUNITY', 'PROTECTION', 'HEALTH']),
       action: z.string(),
-      urgency: z.enum(['IMMEDIATE', 'RECOMMENDED', 'OPTIONAL']),
+      urgency: z.preprocess(
+        (val) => (val === 'HIGH' ? 'IMMEDIATE' : val === 'MEDIUM' ? 'RECOMMENDED' : val === 'LOW' ? 'OPTIONAL' : val),
+        z.enum(['IMMEDIATE', 'RECOMMENDED', 'OPTIONAL'])
+      ),
       scientificReason: z.string(),
     })
   ).min(1, 'At least one action recommendation must be provided'),

@@ -19,6 +19,7 @@ import { AIAssistantResponse } from '@/lib/ai/schemas';
 import { DEFAULT_HOUSEHOLD_PROFILE } from '@/lib/types/user';
 import { evaluateGRAPStage } from '@/lib/engine/grap-engine';
 import { useCity } from '@/context/CityContext';
+import { useScenario } from '@/context/ScenarioContext';
 
 interface ChatMessage {
   id: string;
@@ -39,6 +40,7 @@ const QUICK_PROMPT_CHIPS = [
 
 export default function AssistantPage() {
   const { aqiData: aqiState } = useCity();
+  const { profile, language, activeScenario } = useScenario();
   const aqi = aqiState.current.aqi ?? 176;
   const grap = evaluateGRAPStage(aqi, aqiState.isNCR);
   const dominant = aqiState.current.dominantPollutantName ?? 'PM2.5';
@@ -97,7 +99,8 @@ export default function AssistantPage() {
         body: JSON.stringify({
           message: text,
           aqiState,
-          profile: DEFAULT_HOUSEHOLD_PROFILE,
+          profile,
+          language,
         }),
       });
 
@@ -153,10 +156,18 @@ export default function AssistantPage() {
           </p>
         </div>
 
-        {/* Live Grounding Pill */}
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-semibold text-slate-700 self-start md:self-auto">
-          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-          <span>{aqiState.city}: AQI {aqi} • {dominant}</span>
+        {/* Live Grounding & Scenario Pill */}
+        <div className="flex flex-wrap items-center gap-2">
+          {activeScenario && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-amber-900 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>Scenario: {activeScenario.badge}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-xs font-semibold text-slate-700 self-start md:self-auto">
+            <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{aqiState.city}: AQI {aqi} • {dominant}</span>
+          </div>
         </div>
       </div>
 

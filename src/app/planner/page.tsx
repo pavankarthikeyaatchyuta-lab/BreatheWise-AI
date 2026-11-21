@@ -25,13 +25,14 @@ import {
   Utensils,
   Dumbbell
 } from 'lucide-react';
-import { HouseholdProfile, DEFAULT_HOUSEHOLD_PROFILE } from '@/lib/types/user';
+import { HouseholdProfile, DEFAULT_HOUSEHOLD_PROFILE, EVALUATOR_SCENARIOS, EvaluatorScenarioId } from '@/lib/types/user';
 import { generateDailyPlan } from '@/lib/engine/planner-engine';
 import { useCity } from '@/context/CityContext';
+import { useScenario } from '@/context/ScenarioContext';
 
 export default function PlannerPage() {
   const { aqiData: aqiState } = useCity();
-  const [profile, setProfile] = useState<HouseholdProfile>(DEFAULT_HOUSEHOLD_PROFILE);
+  const { profile, updateProfile, activeScenario, selectScenario, resetToDefault } = useScenario();
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const plan = generateDailyPlan(profile, aqiState);
 
@@ -131,7 +132,7 @@ export default function PlannerPage() {
               <input
                 type="checkbox"
                 checked={profile.hasInfantsOrChildren}
-                onChange={(e) => setProfile({ ...profile, hasInfantsOrChildren: e.target.checked })}
+                onChange={(e) => updateProfile({ hasInfantsOrChildren: e.target.checked })}
                 className="mt-1 rounded text-emerald-600 focus:ring-emerald-500"
               />
               <div className="text-xs">
@@ -146,7 +147,7 @@ export default function PlannerPage() {
               <input
                 type="checkbox"
                 checked={profile.hasElderly}
-                onChange={(e) => setProfile({ ...profile, hasElderly: e.target.checked })}
+                onChange={(e) => updateProfile({ hasElderly: e.target.checked })}
                 className="mt-1 rounded text-emerald-600 focus:ring-emerald-500"
               />
               <div className="text-xs">
@@ -161,7 +162,7 @@ export default function PlannerPage() {
               <input
                 type="checkbox"
                 checked={profile.hasRespiratorySensitivity}
-                onChange={(e) => setProfile({ ...profile, hasRespiratorySensitivity: e.target.checked })}
+                onChange={(e) => updateProfile({ hasRespiratorySensitivity: e.target.checked })}
                 className="mt-1 rounded text-emerald-600 focus:ring-emerald-500"
               />
               <div className="text-xs">
@@ -174,7 +175,7 @@ export default function PlannerPage() {
               <span className="text-xs font-bold text-slate-900 block mb-1">Commute Mode</span>
               <select
                 value={profile.primaryCommuteMode}
-                onChange={(e) => setProfile({ ...profile, primaryCommuteMode: e.target.value as any })}
+                onChange={(e) => updateProfile({ primaryCommuteMode: e.target.value as any })}
                 className="w-full bg-white border border-slate-200 text-xs rounded-xl p-2 font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="TWO_WHEELER">Two-Wheeler (Motorcycle)</option>

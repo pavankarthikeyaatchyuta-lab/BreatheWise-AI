@@ -13,10 +13,64 @@ import { AirQualityState } from '../types/aqi';
 import { HouseholdProfile } from '../types/user';
 import { evaluateGRAPStage } from '../engine/grap-engine';
 
+/**
+ * Resolves the Gemini API Key with precedence for local .env.local
+ * to prevent stale or revoked host OS environment variables from shadowing it.
+ */
+function resolveGeminiApiKey(): string | undefined {
+  // In test environment, strictly honor process.env to allow test fixtures to simulate missing/invalid keys
+  if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
+    return process.env.GEMINI_API_KEY;
+  }
+
+  try {
+    if (typeof process !== 'undefined' && process.cwd) {
+      const fs = require('fs');
+      const path = require('path');
+      const envPath = path.resolve(process.cwd(), '.env.local');
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, 'utf8');
+        const match = content.match(/^GEMINI_API_KEY=(.+)$/m);
+        if (match && match[1].trim()) {
+          return match[1].trim();
+        }
+      }
+    }
+  } catch {
+    // fall through to process.env
+  }
+  return process.env.GEMINI_API_KEY;
+}
+
+/**
+ * Resolves the Gemini Model name, prioritizing .env.local configuration,
+ * defaulting to 'gemini-3.8-flash' (standard modern Generative Language model).
+ */
+function resolveGeminiModel(): string {
+  try {
+    if (typeof process !== 'undefined' && process.cwd) {
+      const fs = require('fs');
+      const path = require('path');
+      const envPath = path.resolve(process.cwd(), '.env.local');
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, 'utf8');
+        const match = content.match(/^GEMINI_MODEL=(.+)$/m);
+        if (match && match[1].trim()) {
+          return match[1].trim();
+        }
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+}
+
 export async function askGroundedAssistant(
   userQuery: string,
   aqiState: AirQualityState,
-  profile: HouseholdProfile
+  profile: HouseholdProfile,
+  language: 'en' | 'te' | 'hi' = 'en'
 ): Promise<AIAssistantResponse> {
   // 1. Sanitize input
   const sanitization = sanitizeUserInput(userQuery);
@@ -41,16 +95,23 @@ export async function askGroundedAssistant(
     };
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = resolveGeminiApiKey();
   if (!apiKey || apiKey.trim() === '') {
     // Graceful fallback to deterministic assistant
     return generateDeterministicAssistantResponse(sanitization.sanitizedText, aqiState, profile);
   }
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-  const aqi = aqiState.current.aqi ?? 300;
-  const grap = evaluateGRAPStage(aqi, profile.isNCR);
-  const dominant = aqiState.current.dominantPollutantName ?? 'PM2.5';
+  const modelName = resolveGeminiModel();
+  const aqi = aqiState.current?.aqi ?? 300;
+  const grap = evaluateGRAPStage(aqi, profile?.isNCR ?? false);
+  const dominant = aqiState.current?.dominantPollutantName ?? 'PM2.5';
+
+  const languagePrompt =
+    language === 'te'
+      ? 'The user prefers explanations in Telugu (తెలుగు) where natural, while keeping scientific terms, AQI values, and numbers clear.'
+      : language === 'hi'
+      ? 'The user prefers explanations in Hindi (हिन्दी) where natural, while keeping scientific terms, AQI values, and numbers clear.'
+      : 'Respond in clear, accessible English.';
 
   const systemInstruction = `You are BreatheWise AI, an expert, family-first urban air quality and sustainable living assistant.
 You operate under strict scientific and regulatory ground rules:
@@ -69,7 +130,9 @@ You operate under strict scientific and regulatory ground rules:
    - Kitchen partition: ${profile.hasKitchenPartition}, Exhaust fan: ${profile.hasKitchenExhaustFan}
    - Air purifier: ${profile.hasAirPurifier}
 4. STRICT GUIDELINES:
+   - Language: ${languagePrompt}
    - Indoor guidance: You must NEVER claim to measure indoor air quality. Physical indoor sensors do not exist here. Provide evidence-based procedural guidance (ventilation schedule, cooking exhaust timing, wet mopping instead of dry sweeping, safe DIY Corsi-Rosenthal boxes).
+   - Houseplant myth: Potted houseplants cannot meaningfully clean particulate smog (PM2.5) in living spaces; do not suggest plants as air purifiers.
    - Diurnal advice: In winter smog, morning (6-9:30 AM) and evening (7:30-10 PM) suffer from temperature inversion. Never claim any morning hour is "100% safe" during severe smog. Direct outdoor activities toward the afternoon relative low window.
    - Decouple personal exposure hours from tailpipe emissions and GHG CO2e.
    - Return valid JSON matching the exact schema requested.`;

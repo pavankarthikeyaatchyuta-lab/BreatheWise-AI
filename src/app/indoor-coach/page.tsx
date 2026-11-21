@@ -20,19 +20,28 @@ import {
 } from 'lucide-react';
 import { evaluateIndoorGuidance } from '@/lib/engine/indoor-engine';
 import { useCity } from '@/context/CityContext';
+import { useScenario } from '@/context/ScenarioContext';
 
 type CategoryFilter = 'ALL' | 'VENTILATION' | 'COOKING' | 'CLEANING' | 'DIY_FILTER';
 
 export default function IndoorCoachPage() {
   const { aqiData: aqiState } = useCity();
+  const { profile } = useScenario();
   const currentPm25 = aqiState.current.pollutants.pm25?.value ?? 102;
   const currentAqi = aqiState.current.aqi ?? 176;
 
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('ALL');
-  const [hasPartition, setHasPartition] = useState(true);
-  const [hasExhaust, setHasExhaust] = useState(true);
-  const [hasPurifier, setHasPurifier] = useState(false);
+  const [hasPartition, setHasPartition] = useState(profile.hasKitchenPartition);
+  const [hasExhaust, setHasExhaust] = useState(profile.hasKitchenExhaustFan);
+  const [hasPurifier, setHasPurifier] = useState(profile.hasAirPurifier);
   const [showDiyModal, setShowDiyModal] = useState(false);
+
+  // Synchronize when scenario updates
+  React.useEffect(() => {
+    setHasPartition(profile.hasKitchenPartition);
+    setHasExhaust(profile.hasKitchenExhaustFan);
+    setHasPurifier(profile.hasAirPurifier);
+  }, [profile]);
 
   const guidance = evaluateIndoorGuidance(
     currentPm25,
@@ -384,6 +393,26 @@ export default function IndoorCoachPage() {
               </button>
             </div>
           )}
+
+          {/* Card 5: Scientific Fact-Check: Houseplants vs Mechanical Filtration */}
+          <div className="bg-amber-50/60 rounded-3xl border border-amber-200/80 p-5 sm:p-6 shadow-xs">
+            <div className="flex items-start gap-3.5">
+              <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+                <Info className="w-5 h-5" />
+              </div>
+              <div className="space-y-1.5 text-xs text-slate-700">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Scientific Fact-Check: Can Indoor Houseplants Filter PM2.5 Smog?
+                </h3>
+                <p className="leading-relaxed">
+                  <strong>No.</strong> While commonly claimed online, potted houseplants have <em>zero measurable effect on indoor PM2.5 or PM10 particulate levels</em>. The 1989 NASA study evaluated volatile chemicals (VOCs) inside sealed 1-cubic-meter chambers; real-world residential rooms have constant air exchange.
+                </p>
+                <p className="leading-relaxed text-amber-950 font-medium">
+                  <strong>Practical Rule:</strong> Never rely on plants as air-cleaning devices for children, senior citizens, or asthmatics. Only physical particle capture—via high Clean Air Delivery Rate (CADR) HEPA purifiers or safe DIY Corsi-Rosenthal boxes—combined with kitchen exhaust source control effectively clears toxic particulates.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

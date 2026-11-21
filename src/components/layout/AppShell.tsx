@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar';
 import { AppHeader } from './AppHeader';
 import { Footer } from './Footer';
 import { CityProvider, useCity } from '@/context/CityContext';
+import { ScenarioProvider } from '@/context/ScenarioContext';
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,7 +51,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <CityProvider>
-      <AppShellInner>{children}</AppShellInner>
+      <ScenarioProvider>
+        <AppShellInner>{children}</AppShellInner>
+      </ScenarioProvider>
     </CityProvider>
   );
 }

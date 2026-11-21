@@ -21,13 +21,33 @@ import {
 import { TransportMode } from '@/lib/types/alternatives';
 import { compareTransportAlternatives, TRANSPORT_FACTORS } from '@/lib/engine/alternatives';
 
+import { useScenario } from '@/context/ScenarioContext';
+
 type CategoryTab = 'COMMUTE' | 'HOME_ENERGY' | 'DAILY_HABITS';
 
 export default function AlternativesPage() {
+  const { profile } = useScenario();
   const [activeTab, setActiveTab] = useState<CategoryTab>('COMMUTE');
-  const [distanceKm, setDistanceKm] = useState<number>(14);
+  const [distanceKm, setDistanceKm] = useState<number>(profile.commuteDistanceKm || 14);
   const [passengers, setPassengers] = useState<number>(1);
-  const [baselineMode, setBaselineMode] = useState<TransportMode>('SOLO_PETROL_CAR');
+  const [baselineMode, setBaselineMode] = useState<TransportMode>(
+    profile.primaryCommuteMode === 'SOLO_CAR'
+      ? 'SOLO_PETROL_CAR'
+      : profile.primaryCommuteMode === 'TWO_WHEELER'
+      ? 'MOTORCYCLE_125CC'
+      : 'SOLO_PETROL_CAR'
+  );
+
+  React.useEffect(() => {
+    if (profile.commuteDistanceKm) {
+      setDistanceKm(profile.commuteDistanceKm);
+    }
+    if (profile.primaryCommuteMode === 'SOLO_CAR') {
+      setBaselineMode('SOLO_PETROL_CAR');
+    } else if (profile.primaryCommuteMode === 'TWO_WHEELER') {
+      setBaselineMode('MOTORCYCLE_125CC');
+    }
+  }, [profile]);
 
   const { baseline, alternatives } = compareTransportAlternatives(distanceKm, baselineMode);
 

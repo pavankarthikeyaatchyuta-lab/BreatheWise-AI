@@ -35,7 +35,9 @@ export async function POST(request: NextRequest) {
       ...(body.profile || {}),
     };
 
-    const response = await askGroundedAssistant(message, aqiState, profile);
+    const language = body.language === 'te' ? 'te' : body.language === 'hi' ? 'hi' : 'en';
+
+    const response = await askGroundedAssistant(message, aqiState, profile, language);
     return NextResponse.json(response);
   } catch (error) {
     console.error('Chat route error:', error);
