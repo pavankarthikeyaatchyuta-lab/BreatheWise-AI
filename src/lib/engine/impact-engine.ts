@@ -11,6 +11,8 @@ import { ExplainableImpactResult } from '../types/impact';
 import { TransportMode } from '../types/alternatives';
 import { TRANSPORT_FACTORS } from './alternatives';
 
+export type { ExplainableImpactResult };
+
 export function calculateExplainableImpact(
   distanceKm: number,
   baselineMode: TransportMode,
