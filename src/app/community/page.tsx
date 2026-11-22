@@ -32,13 +32,13 @@ export default function CommunityPage() {
     heating: true,
   });
 
-  const aqi = aqiState.current.aqi ?? 176;
+  const aqi = aqiState.current.aqi;
   const grap = evaluateGRAPStage(aqi, aqiState.isNCR);
 
   const sampleBulletinText = `📢 BREATHEWISE AI COMMUNITY ADVISORY
 Date: ${new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}
 Location: ${aqiState.city} (${aqiState.isNCR ? 'Delhi-NCR Statutory' : 'Regional Advisory'})
-Status: AQI ${aqi} • ${grap.stageName}
+Status: ${aqi !== null ? `AQI ${aqi}` : 'AQI Telemetry Pending'} • ${grap.stageName}
 
 🚨 IMMEDIATE COMMUNITY & SCHOOL ACTIONS:
 1. SCHOOLS: Shift morning assemblies and outdoor sports indoors. Keep classroom windows closed with indoor air cleaning.
@@ -99,9 +99,17 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
               </span>
             </div>
 
-            {/* Stage Pill & AQI Range */}
+            {/* Dynamic Stage Pill & AQI Range */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="px-4 py-1.5 rounded-xl bg-orange-100 text-orange-900 font-black text-sm border border-orange-200 tracking-wide uppercase">
+              <span className={`px-4 py-1.5 rounded-xl font-black text-sm border tracking-wide uppercase ${
+                grap.activeStage === 'NONE'
+                  ? 'bg-emerald-100 text-emerald-900 border-emerald-200'
+                  : grap.activeStage === 'STAGE_I'
+                  ? 'bg-yellow-100 text-yellow-900 border-yellow-200'
+                  : grap.activeStage === 'STAGE_II'
+                  ? 'bg-orange-100 text-orange-900 border-orange-200'
+                  : 'bg-red-100 text-red-900 border-red-200'
+              }`}>
                 {grap.stageName}
               </span>
               <span className="text-sm font-extrabold text-slate-800">
@@ -113,20 +121,16 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
               Reflects CPCB AQI threshold bands under the revised CAQM GRAP framework. Statutory invocation orders in Delhi-NCR are formally issued by the CAQM Sub-Committee based on dynamic meteorological forecasting.
             </p>
 
-            {/* Key Actions List (matching reference image) */}
+            {/* Dynamic Key Actions List */}
             <ul className="space-y-2 text-xs text-slate-700 font-medium mb-6">
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Enhanced dust control</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Check on construction activities</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Restrict high-polluting vehicles</span>
-              </li>
+              {grap.actionItems.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-slate-900">{item.title}:</strong> {item.description}
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
 
