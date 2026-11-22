@@ -43,7 +43,7 @@ export interface IndoorGuidanceResult {
 }
 
 export function evaluateIndoorGuidance(
-  outdoorPm25: number,
+  outdoorPm25: number | null,
   outdoorAqi: number | null,
   relativeLowWindow: { start: string; end: string } | null,
   hasKitchenPartition: boolean,
@@ -55,7 +55,11 @@ export function evaluateIndoorGuidance(
   let recommendedAction: 'KEEP_WINDOWS_SEALED' | 'SHORT_CONTROLLED_VENTILATION' | 'CROSS_VENTILATE_FREELY' = 'KEEP_WINDOWS_SEALED';
   let explanation = '';
 
-  if (outdoorPm25 > 120 || (outdoorAqi !== null && outdoorAqi > 250)) {
+  if (outdoorPm25 === null) {
+    canVentilateNow = false;
+    recommendedAction = 'SHORT_CONTROLLED_VENTILATION';
+    explanation = 'Outdoor particulate telemetry currently unavailable for this location. Observe local ambient conditions: if smoky or hazy, keep exterior windows sealed. Rely on kitchen exhaust and wet mopping for indoor particle reduction.';
+  } else if (outdoorPm25 > 120 || (outdoorAqi !== null && outdoorAqi > 250)) {
     canVentilateNow = false;
     recommendedAction = 'KEEP_WINDOWS_SEALED';
     explanation = `Application Behavioral Heuristic (Practical particulate-protection rule derived from CPCB 24-hour Poor-to-Very Poor boundary of 121 µg/m³; intended to guide household ventilation during severe smog episodes rather than an official statutory medical standard): Outdoor ambient PM2.5 is currently ${Math.round(outdoorPm25)} µg/m³. Keep all exterior windows, doors, and balcony vents tightly closed. Opening windows will flood indoor living spaces with fine particulates.`;

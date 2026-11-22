@@ -91,6 +91,8 @@ export function parseOpenMeteoForecast(
 /**
  * Extracts current-hour model forecast concentrations and evaluates CPCB breakpoints
  * without fabricating missing pollutants like NH3 or Pb.
+ * Transparently records hoursRecorded as 1 (hourly model step), preventing false
+ * claims of statutory 24-hour physical station averaging.
  */
 export function getModelDerivedCurrentResult(
   data: OpenMeteoHourlyResponse,
@@ -99,23 +101,23 @@ export function getModelDerivedCurrentResult(
   const inputs: Partial<Record<PollutantKey, { value: number; hoursRecorded: number }>> = {};
 
   if (data.hourly.pm2_5 && data.hourly.pm2_5.length > 0 && data.hourly.pm2_5[0] !== null) {
-    inputs.pm25 = { value: data.hourly.pm2_5[0], hoursRecorded: 24 };
+    inputs.pm25 = { value: data.hourly.pm2_5[0], hoursRecorded: 1 };
   }
   if (data.hourly.pm10 && data.hourly.pm10.length > 0 && data.hourly.pm10[0] !== null) {
-    inputs.pm10 = { value: data.hourly.pm10[0], hoursRecorded: 24 };
+    inputs.pm10 = { value: data.hourly.pm10[0], hoursRecorded: 1 };
   }
   if (data.hourly.nitrogen_dioxide && data.hourly.nitrogen_dioxide.length > 0 && data.hourly.nitrogen_dioxide[0] !== null) {
-    inputs.no2 = { value: data.hourly.nitrogen_dioxide[0], hoursRecorded: 24 };
+    inputs.no2 = { value: data.hourly.nitrogen_dioxide[0], hoursRecorded: 1 };
   }
   if (data.hourly.sulphur_dioxide && data.hourly.sulphur_dioxide.length > 0 && data.hourly.sulphur_dioxide[0] !== null) {
-    inputs.so2 = { value: data.hourly.sulphur_dioxide[0], hoursRecorded: 24 };
+    inputs.so2 = { value: data.hourly.sulphur_dioxide[0], hoursRecorded: 1 };
   }
   if (data.hourly.carbon_monoxide && data.hourly.carbon_monoxide.length > 0 && data.hourly.carbon_monoxide[0] !== null) {
     // Open-Meteo CO is in µg/m³; CPCB expects mg/m³
-    inputs.co = { value: Number((data.hourly.carbon_monoxide[0] / 1000).toFixed(2)), hoursRecorded: 8 };
+    inputs.co = { value: Number((data.hourly.carbon_monoxide[0] / 1000).toFixed(2)), hoursRecorded: 1 };
   }
   if (data.hourly.ozone && data.hourly.ozone.length > 0 && data.hourly.ozone[0] !== null) {
-    inputs.o3 = { value: data.hourly.ozone[0], hoursRecorded: 8 };
+    inputs.o3 = { value: data.hourly.ozone[0], hoursRecorded: 1 };
   }
 
   // Note: NH3 and Pb are NOT provided by Open-Meteo atmospheric forecast models

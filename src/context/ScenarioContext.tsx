@@ -29,6 +29,13 @@ export function ScenarioProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<HouseholdProfile>(DEFAULT_HOUSEHOLD_PROFILE);
   const [language, setLanguage] = useState<SupportedLanguage>('en');
 
+  // Synchronize document root lang attribute for accessibility & screen readers
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
+
   const selectScenario = useCallback((id: EvaluatorScenarioId) => {
     const scenario = EVALUATOR_SCENARIOS[id];
     if (scenario) {

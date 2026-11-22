@@ -90,27 +90,27 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  GRAP Status (Delhi-NCR)
+                  AQI-based GRAP Stage Indicator
                 </span>
                 <Info className="w-3.5 h-3.5 text-slate-400" />
               </div>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                CAQM Statutory
+                CAQM Framework (Advisory)
               </span>
             </div>
 
             {/* Stage Pill & AQI Range */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="px-4 py-1.5 rounded-xl bg-orange-100 text-orange-900 font-black text-sm border border-orange-200 tracking-wide uppercase">
-                Stage II
+                {grap.stageName}
               </span>
               <span className="text-sm font-extrabold text-slate-800">
-                AQI: 301 – 400 (Very Poor)
+                AQI Band: {grap.aqiTriggerRange}
               </span>
             </div>
 
             <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              As per Commission for Air Quality Management (CAQM) order. Mandated for Delhi and NCR districts only.
+              Reflects CPCB AQI threshold bands under the revised CAQM GRAP framework. Statutory invocation orders in Delhi-NCR are formally issued by the CAQM Sub-Committee based on dynamic meteorological forecasting.
             </p>
 
             {/* Key Actions List (matching reference image) */}
@@ -384,7 +384,13 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
 
       {/* CAQM Official Order Modal */}
       {showOrderModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="grap-order-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowOrderModal(false); }}
+        >
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
               <div className="flex items-center gap-2.5">
@@ -392,7 +398,7 @@ Generated via BreatheWise AI • Grounded in CAQM Directives & CPCB 8-Pollutant 
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 id="grap-order-title" className="text-lg font-bold text-slate-900">
                     CAQM GRAP Directive Summary
                   </h2>
                   <span className="text-xs text-slate-500">

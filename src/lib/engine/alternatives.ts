@@ -55,7 +55,7 @@ export const TRANSPORT_FACTORS: Record<TransportMode, TransportEmissionFactor> =
     mode: 'DELHI_METRO',
     name: 'Electric Rapid Metro (DMRC / Urban Rail)',
     occupancy: 1000, // Average passenger loading
-    co2e_g_per_pkm: 26, // Central Electricity Authority grid factor 0.716 kg/kWh allocated across high passenger densities
+    co2e_g_per_pkm: 24.5, // CEA Version 22.0 factor 0.675 kg/kWh × 0.0363 kWh/pkm specific energy = 24.5 g CO2e/pkm
     pm25_g_per_pkm: 0.0000, // Zero tailpipe emissions
     estimatedCostPerKmInr: 2.2,
     averageSpeedKmph: 36,
@@ -77,7 +77,7 @@ export const TRANSPORT_FACTORS: Record<TransportMode, TransportEmissionFactor> =
     mode: 'ELECTRIC_BUS',
     name: 'Electric Low-Floor City Bus (AC)',
     occupancy: 40,
-    co2e_g_per_pkm: 28,
+    co2e_g_per_pkm: 27, // CEA Version 22.0 factor 0.675 kg/kWh × 0.040 kWh/pkm = 27 g CO2e/pkm
     pm25_g_per_pkm: 0.0000, // Zero tailpipe
     estimatedCostPerKmInr: 1.8,
     averageSpeedKmph: 17,

@@ -248,7 +248,13 @@ export default function ImpactPage() {
 
       {/* Transparent Calculation Proof Modal */}
       {showProofModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="proof-modal-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowProofModal(false); }}
+        >
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
               <div className="flex items-center gap-2.5">
@@ -256,7 +262,7 @@ export default function ImpactPage() {
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 id="proof-modal-title" className="text-lg font-bold text-slate-900">
                     Transparent Calculation Proof
                   </h2>
                   <span className="text-xs text-slate-500">

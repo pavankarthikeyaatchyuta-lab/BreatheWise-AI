@@ -34,8 +34,8 @@ export function getDelhiDemoState(): AirQualityState {
       pm10: { value: 468, hoursRecorded: 24 }, // Severe
       no2: { value: 114, hoursRecorded: 24 },  // Moderate
       so2: { value: 28, hoursRecorded: 24 },   // Good
-      co: { value: 2.8, hoursRecorded: 8 },    // Moderate
-      o3: { value: 42, hoursRecorded: 8 },     // Good
+      co: { value: 2.8, hoursRecorded: 24 },    // Moderate (8h average over 24h monitored day)
+      o3: { value: 42, hoursRecorded: 24 },     // Good (8h average over 24h monitored day)
       nh3: { value: 68, hoursRecorded: 24 },   // Good
       pb: { value: 0.4, hoursRecorded: 24 },   // Good
     },
@@ -79,8 +79,8 @@ export function getHyderabadDemoState(): AirQualityState {
       pm10: { value: 214, hoursRecorded: 24 }, // Moderate
       no2: { value: 42, hoursRecorded: 24 },   // Good
       so2: { value: 18, hoursRecorded: 24 },   // Good
-      co: { value: 0.9, hoursRecorded: 8 },    // Good
-      o3: { value: 28, hoursRecorded: 8 },     // Good
+      co: { value: 0.9, hoursRecorded: 24 },    // Good
+      o3: { value: 28, hoursRecorded: 24 },     // Good
     },
     prov
   );
@@ -115,8 +115,8 @@ export function getMumbaiDemoState(): AirQualityState {
       pm10: { value: 142, hoursRecorded: 24 }, // Moderate
       no2: { value: 65, hoursRecorded: 24 },  // Satisfactory
       so2: { value: 18, hoursRecorded: 24 },  // Good
-      co: { value: 1.4, hoursRecorded: 8 },   // Satisfactory
-      o3: { value: 36, hoursRecorded: 8 },    // Good
+      co: { value: 1.4, hoursRecorded: 24 },   // Satisfactory
+      o3: { value: 36, hoursRecorded: 24 },    // Good
       nh3: { value: 24, hoursRecorded: 24 },  // Good
       pb: { value: 0.1, hoursRecorded: 24 },  // Good
     },
@@ -153,8 +153,8 @@ export function getBengaluruDemoState(): AirQualityState {
       pm10: { value: 85, hoursRecorded: 24 },  // Satisfactory
       no2: { value: 36, hoursRecorded: 24 },  // Good
       so2: { value: 10, hoursRecorded: 24 },  // Good
-      co: { value: 0.8, hoursRecorded: 8 },   // Good
-      o3: { value: 24, hoursRecorded: 8 },    // Good
+      co: { value: 0.8, hoursRecorded: 24 },   // Good
+      o3: { value: 24, hoursRecorded: 24 },    // Good
       nh3: { value: 14, hoursRecorded: 24 },  // Good
     },
     prov
@@ -188,8 +188,8 @@ export function getKolkataDemoState(): AirQualityState {
       pm10: { value: 295, hoursRecorded: 24 }, // Poor
       no2: { value: 72, hoursRecorded: 24 },   // Satisfactory
       so2: { value: 22, hoursRecorded: 24 },   // Good
-      co: { value: 1.8, hoursRecorded: 8 },    // Satisfactory
-      o3: { value: 34, hoursRecorded: 8 },     // Good
+      co: { value: 1.8, hoursRecorded: 24 },    // Satisfactory
+      o3: { value: 34, hoursRecorded: 24 },     // Good
       nh3: { value: 38, hoursRecorded: 24 },   // Good
       pb: { value: 0.2, hoursRecorded: 24 },   // Good
     },
@@ -224,8 +224,8 @@ export function getPuneDemoState(): AirQualityState {
       pm10: { value: 112, hoursRecorded: 24 }, // Moderate
       no2: { value: 38, hoursRecorded: 24 },   // Good
       so2: { value: 14, hoursRecorded: 24 },   // Good
-      co: { value: 1.1, hoursRecorded: 8 },    // Good
-      o3: { value: 32, hoursRecorded: 8 },     // Good
+      co: { value: 1.1, hoursRecorded: 24 },    // Good
+      o3: { value: 32, hoursRecorded: 24 },     // Good
     },
     prov
   );
@@ -258,8 +258,8 @@ export function getChennaiDemoState(): AirQualityState {
       pm10: { value: 68, hoursRecorded: 24 },  // Satisfactory
       no2: { value: 24, hoursRecorded: 24 },   // Good
       so2: { value: 12, hoursRecorded: 24 },   // Good
-      co: { value: 0.7, hoursRecorded: 8 },    // Good
-      o3: { value: 22, hoursRecorded: 8 },     // Good
+      co: { value: 0.7, hoursRecorded: 24 },    // Good
+      o3: { value: 22, hoursRecorded: 24 },     // Good
     },
     prov
   );
@@ -292,8 +292,8 @@ export function getLucknowDemoState(): AirQualityState {
       pm10: { value: 345, hoursRecorded: 24 }, // Very Poor
       no2: { value: 76, hoursRecorded: 24 },   // Satisfactory
       so2: { value: 24, hoursRecorded: 24 },   // Good
-      co: { value: 2.2, hoursRecorded: 8 },    // Moderate
-      o3: { value: 38, hoursRecorded: 8 },     // Good
+      co: { value: 2.2, hoursRecorded: 24 },    // Moderate
+      o3: { value: 38, hoursRecorded: 24 },     // Good
       nh3: { value: 48, hoursRecorded: 24 },   // Good
     },
     prov
@@ -327,8 +327,8 @@ export function getPatnaDemoState(): AirQualityState {
       pm10: { value: 425, hoursRecorded: 24 }, // Severe
       no2: { value: 84, hoursRecorded: 24 },   // Moderate
       so2: { value: 26, hoursRecorded: 24 },   // Good
-      co: { value: 2.5, hoursRecorded: 8 },    // Moderate
-      o3: { value: 40, hoursRecorded: 8 },     // Good
+      co: { value: 2.5, hoursRecorded: 24 },    // Moderate
+      o3: { value: 40, hoursRecorded: 24 },     // Good
       nh3: { value: 52, hoursRecorded: 24 },   // Good
     },
     prov

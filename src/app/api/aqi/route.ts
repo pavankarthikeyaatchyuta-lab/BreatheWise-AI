@@ -29,22 +29,31 @@ const CITY_COORDINATES: Record<string, { lat: number; lon: number; isNCR: boolea
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get('city') || 'Delhi-NCR';
+  const cityInfo = CITY_COORDINATES[city] || CITY_COORDINATES['Delhi-NCR'];
   const customLat = searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : null;
   const customLon = searchParams.get('lon') ? parseFloat(searchParams.get('lon')!) : null;
 
-  const cityInfo = CITY_COORDINATES[city] || CITY_COORDINATES['Delhi-NCR'];
-  const lat = customLat ?? cityInfo.lat;
-  const lon = customLon ?? cityInfo.lon;
+  // Enforce privacy-by-design coordinate truncation to 2 decimal places (~1.1 km neighborhood scale)
+  const rawLat = customLat ?? cityInfo.lat;
+  const rawLon = customLon ?? cityInfo.lon;
+  const lat = Number(rawLat.toFixed(2));
+  const lon = Number(rawLon.toFixed(2));
   const isNCR = cityInfo.isNCR;
 
-  // 1. Try fetching Open-Meteo forecast first
-  const forecastResult = await fetchOpenMeteoForecast(lat, lon);
+  // Execute external telemetry requests in parallel
+  const [forecastOutcome, stationOutcome] = await Promise.allSettled([
+    fetchOpenMeteoForecast(lat, lon),
+    fetchOpenAQStation(lat, lon, process.env.OPENAQ_API_KEY),
+  ]);
 
-  // 2. Try fetching OpenAQ ground station
-  const stationResult = await fetchOpenAQStation(lat, lon, process.env.OPENAQ_API_KEY);
+  const forecastResult = forecastOutcome.status === 'fulfilled' ? forecastOutcome.value : null;
+  const stationResult = stationOutcome.status === 'fulfilled' ? stationOutcome.value : null;
 
-  // If live ground station and forecast are both available
-  if (stationResult && forecastResult) {
+  // Determine whether station result provides sufficient data
+  const isStationUsable = stationResult && stationResult.validation.hasParticulate && stationResult.validation.pollutantCount >= 2;
+
+  // Case 1: Both station and forecast available
+  if (isStationUsable && forecastResult) {
     const liveState: AirQualityState = {
       city,
       region: cityInfo.region,
@@ -56,7 +65,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(liveState);
   }
 
-  // If only forecast is available, evaluate estimated category directly from model concentrations
+  // Case 2: Only station data available (preserve physical station data, pair with demo forecast curve)
+  if (isStationUsable) {
+    const fallbackDemo = (DEMO_CITIES[city] || getDelhiDemoState)();
+    const stationState: AirQualityState = {
+      city,
+      region: cityInfo.region,
+      isNCR,
+      current: stationResult,
+      forecast24h: fallbackDemo.forecast24h,
+      provenance: stationResult.provenance,
+    };
+    return NextResponse.json(stationState);
+  }
+
+  // Case 3: Atmospheric forecast model available (Copernicus CAMS ~45 km)
   if (forecastResult) {
     const modelDerivedState: AirQualityState = {
       city,
@@ -69,7 +92,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(modelDerivedState);
   }
 
-  // 3. Fallback to Verified Historical Demonstration Dataset
+  // Case 4: Complete offline fallback to verified historical demonstration dataset
   const demoFn = DEMO_CITIES[city] || getDelhiDemoState;
   const demoState = demoFn();
   return NextResponse.json(demoState);

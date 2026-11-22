@@ -61,24 +61,26 @@ export default function DashboardPage() {
   ];
 
   // Dynamic 24-Hour Diurnal Forecast Engine
-  const forecastList = aqiData.forecast24h && aqiData.forecast24h.length > 0 ? aqiData.forecast24h : [
-    { time: '06:00', pm25: 65, pm10: 110, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: true, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
-    { time: '09:00', pm25: 55, pm10: 95, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
-    { time: '12:00', pm25: 42, pm10: 75, estimatedCategory: 'Good' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'MODERATE_OUTDOORS' as const, isoTimestamp: '' },
-    { time: '15:00', pm25: 38, pm10: 68, estimatedCategory: 'Good' as const, isPeakSmogWindow: false, isRelativeLowWindow: true, activityRecommendation: 'MODERATE_OUTDOORS' as const, isoTimestamp: '' },
-    { time: '18:00', pm25: 58, pm10: 102, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: false, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
-    { time: '21:00', pm25: 72, pm10: 125, estimatedCategory: 'Satisfactory' as const, isPeakSmogWindow: true, isRelativeLowWindow: false, activityRecommendation: 'RESTRICT_VULNERABLE' as const, isoTimestamp: '' },
-  ];
+  const hasForecast = Boolean(aqiData.forecast24h && aqiData.forecast24h.length > 0);
+  const forecastList = hasForecast ? aqiData.forecast24h : [];
 
-  const maxForecastPm = Math.max(...forecastList.map((f) => f.pm25), 50);
+  const maxForecastPm = forecastList.length > 0 ? Math.max(...forecastList.map((f) => f.pm25), 50) : 100;
   const yCeiling = maxForecastPm > 300 ? 400 : maxForecastPm > 200 ? 300 : maxForecastPm > 100 ? 200 : 100;
 
-  let peakForecast = forecastList[0];
-  let lowForecast = forecastList[0];
+  let peakForecast = forecastList[0] || { time: '--:--', pm25: 0 };
+  let lowForecast = forecastList[0] || { time: '--:--', pm25: 0 };
   forecastList.forEach((f) => {
     if (f.pm25 > peakForecast.pm25) peakForecast = f;
     if (f.pm25 < lowForecast.pm25) lowForecast = f;
   });
+
+  const forecastSourceLabel = !hasForecast
+    ? 'Forecast Telemetry Unavailable for this coordinate'
+    : aqiData.provenance.type === 'ATMOSPHERIC_MODEL_FORECAST'
+    ? 'Model Source: Copernicus CAMS Global via Open-Meteo (~45 km grid; 3-hourly underlying model steps interpolated to hourly output)'
+    : aqiData.provenance.type === 'DEMO_RECORD'
+    ? 'Dataset Source: Historical Winter Smog Reference Profile (Demo Scenario)'
+    : `Station Telemetry: ${aqiData.provenance.sourceName}`;
 
   // Calculate coordinates for SVG: viewBox 0 0 600 160
   // Left: 32, Right: 575 (width 543)
@@ -358,7 +360,7 @@ export default function DashboardPage() {
                   <span>24-Hour AQI Diurnal Forecast</span>
                 </h2>
                 <span className="text-[11px] text-slate-400">
-                  Model Source: Copernicus CAMS Global via Open-Meteo (~45 km grid; 3-hourly underlying model steps interpolated to hourly output)
+                  {forecastSourceLabel}
                 </span>
               </div>
 
@@ -376,7 +378,9 @@ export default function DashboardPage() {
             {/* Smooth Diurnal Spline SVG Chart + Family Skyline Vector (matching reference image) */}
             <div className="flex flex-col md:flex-row items-center gap-4 pt-4 pb-2">
               <div className="flex-1 w-full">
-                <svg viewBox="0 0 600 160" className="w-full h-36 overflow-visible">
+                <svg viewBox="0 0 600 160" className="w-full h-36 overflow-visible" role="img" aria-label="24-hour diurnal air quality forecast curve">
+                  <title>24-Hour Diurnal PM2.5 Forecast Curve</title>
+                  <desc>Continuous graph displaying hourly particulate concentration throughout the diurnal cycle, highlighting morning and evening inversion peaks.</desc>
                   {/* Gradient definition */}
                   <defs>
                     <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">

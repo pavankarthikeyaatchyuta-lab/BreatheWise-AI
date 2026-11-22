@@ -10,6 +10,19 @@
 import { AirQualityState, DiurnalForecastHour } from '../types/aqi';
 import { HouseholdProfile } from '../types/user';
 import { DailySchedulePlan, PlannedActivity } from '../types/planner';
+import { calculateSubIndex } from '../aqi/cpcb-calc';
+
+function getForecastAtHour(forecast: DiurnalForecastHour[], timeStr: string): DiurnalForecastHour | undefined {
+  if (!forecast || forecast.length === 0) return undefined;
+  const hour = parseInt(timeStr.split(':')[0], 10);
+  return forecast.find((f) => parseInt(f.time.split(':')[0], 10) === hour) || forecast[0];
+}
+
+function getAqiAtTime(forecast: DiurnalForecastHour[], timeStr: string, fallbackAqi: number): number {
+  const f = getForecastAtHour(forecast, timeStr);
+  if (!f) return fallbackAqi;
+  return calculateSubIndex('pm25', f.pm25) ?? Math.round(f.pm25 * 1.5);
+}
 
 export function generateDailyPlan(
   profile: HouseholdProfile,
@@ -24,11 +37,11 @@ export function generateDailyPlan(
   const relativeLowHours = aqiState.forecast24h.filter((h) => h.isRelativeLowWindow);
 
   const relativeLowWindow = {
-    start: relativeLowHours.length > 0 ? relativeLowHours[0].time : '13:00',
+    start: relativeLowHours.length > 0 ? relativeLowHours[0].time : '14:00',
     end: relativeLowHours.length > 0 ? relativeLowHours[relativeLowHours.length - 1].time : '16:00',
     advisory:
       isSevere
-        ? 'NOTE: Even during the midday relative dip, pollution remains in the Very Poor / Severe range. Outdoor activity should still be minimized, especially for children and senior citizens.'
+        ? 'NOTE: Even during the midday relative dip, pollution remains elevated. Outdoor activity should still be minimized, especially for children and senior citizens.'
         : 'Favorable relative window: Atmospheric boundary layer expansion provides lower surface PM2.5. Best window for essential outdoor errands.',
   };
 
@@ -45,6 +58,19 @@ export function generateDailyPlan(
     },
   ];
 
+  // Dynamically calculate estimated AQI values from the actual 24-hour forecast
+  const morningExerciseOrigAqi = getAqiAtTime(aqiState.forecast24h, '06:30', currentAqi);
+  const morningExerciseAdaptedAqi = getAqiAtTime(aqiState.forecast24h, '15:30', Math.round(currentAqi * 0.6));
+
+  const schoolCommuteOrigAqi = getAqiAtTime(aqiState.forecast24h, '07:45', currentAqi);
+  const schoolCommuteAdaptedAqi = getAqiAtTime(aqiState.forecast24h, '08:05', Math.round(currentAqi * 0.9));
+
+  const workCommuteOrigAqi = getAqiAtTime(aqiState.forecast24h, profile.commuteDepartureTime, currentAqi);
+  const workCommuteAdaptedAqi = workCommuteOrigAqi;
+
+  const ventilationOrigAqi = getAqiAtTime(aqiState.forecast24h, '08:00', currentAqi);
+  const ventilationAdaptedAqi = getAqiAtTime(aqiState.forecast24h, relativeLowWindow.start, Math.round(currentAqi * 0.5));
+
   // Adapt Schedule Activities
   const activities: PlannedActivity[] = [
     {
@@ -57,11 +83,11 @@ export function generateDailyPlan(
       adaptedTime: '15:30',
       adaptedLocation: isVeryPoor ? 'INDOOR' : 'OUTDOOR_PROTECTED',
       reasonForChange: isVeryPoor
-        ? 'Morning inversion elevates ambient PM2.5 by 40-70%. Aerobic exercise increases tidal breathing volume 4x, pulling toxic particulates into deep alveolar tissue. Shifted to indoor yoga/aerobics.'
+        ? 'Literature contextual reference: Radiative cooling during nocturnal ground inversions typically concentrates morning fine aerosols compared to midday dispersion (Guttikunda et al., Atmospheric Environment). Aerobic exercise substantially increases respiratory minute ventilation (breathing rate × tidal volume), multiplying deep-lung particulate dose. Shifted to indoor yoga/aerobics.'
         : 'Moved closer to afternoon relative low window to minimize inhalation risk.',
       protectionRequired: isVeryPoor ? 'AVOID_ACTIVITY' : 'NONE',
-      estimatedAQIAtOriginalTime: 380,
-      estimatedAQIAtAdaptedTime: 185,
+      estimatedAQIAtOriginalTime: morningExerciseOrigAqi,
+      estimatedAQIAtAdaptedTime: morningExerciseAdaptedAqi,
     },
     {
       id: 'act-2',
@@ -75,8 +101,8 @@ export function generateDailyPlan(
       reasonForChange:
         'Behavioral scheduling heuristic: Adjusting departure by 15-20 minutes is intended to help reduce exposure to concentrated curbside vehicle idling queues during peak drop-off windows (behavioral heuristic, not live GPS tracking). Prioritize minimizing outdoor exposure time and shifting activities indoors; masks designed for adults do not achieve reliable facial seals on pediatric anatomy and must not be relied upon as a substitute for exposure reduction.',
       protectionRequired: profile.hasInfantsOrChildren ? 'REDUCE_EXPOSURE' : 'NONE',
-      estimatedAQIAtOriginalTime: 395,
-      estimatedAQIAtAdaptedTime: 340,
+      estimatedAQIAtOriginalTime: schoolCommuteOrigAqi,
+      estimatedAQIAtAdaptedTime: schoolCommuteAdaptedAqi,
     },
     {
       id: 'act-3',
@@ -95,8 +121,8 @@ export function generateDailyPlan(
         profile.primaryCommuteMode === 'TWO_WHEELER' || profile.primaryCommuteMode === 'OPEN_AUTO'
           ? 'N95_RESPIRATOR'
           : 'NONE',
-      estimatedAQIAtOriginalTime: 350,
-      estimatedAQIAtAdaptedTime: 350,
+      estimatedAQIAtOriginalTime: workCommuteOrigAqi,
+      estimatedAQIAtAdaptedTime: workCommuteAdaptedAqi,
     },
     {
       id: 'act-4',
@@ -110,8 +136,8 @@ export function generateDailyPlan(
       reasonForChange:
         'Opening windows during 8:00 AM morning smog traps hazardous PM2.5 inside sleeping areas. Postponed to the afternoon relative low window.',
       protectionRequired: 'NONE',
-      estimatedAQIAtOriginalTime: 400,
-      estimatedAQIAtAdaptedTime: 200,
+      estimatedAQIAtOriginalTime: ventilationOrigAqi,
+      estimatedAQIAtAdaptedTime: ventilationAdaptedAqi,
     },
   ];
 

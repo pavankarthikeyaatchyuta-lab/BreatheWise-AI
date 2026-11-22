@@ -27,8 +27,12 @@ type CategoryFilter = 'ALL' | 'VENTILATION' | 'COOKING' | 'CLEANING' | 'DIY_FILT
 export default function IndoorCoachPage() {
   const { aqiData: aqiState } = useCity();
   const { profile } = useScenario();
-  const currentPm25 = aqiState.current.pollutants.pm25?.value ?? 102;
-  const currentAqi = aqiState.current.aqi ?? 176;
+
+  // Extract real PM2.5 and AQI values without silent synthetic defaults
+  const pm25Reading = aqiState.current.pollutants.pm25;
+  const currentPm25 = pm25Reading && pm25Reading.value >= 0 ? pm25Reading.value : null;
+  const currentAqi = aqiState.current.aqi;
+  const isDemo = aqiState.provenance.type === 'DEMO_RECORD';
 
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('ALL');
   const [hasPartition, setHasPartition] = useState(profile.hasKitchenPartition);
@@ -421,7 +425,13 @@ export default function IndoorCoachPage() {
 
       {/* Corsi-Rosenthal Blueprint Modal */}
       {showDiyModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="diy-modal-title"
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowDiyModal(false); }}
+        >
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
               <div className="flex items-center gap-2.5">
@@ -429,7 +439,7 @@ export default function IndoorCoachPage() {
                   <Wrench className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 id="diy-modal-title" className="text-lg font-bold text-slate-900">
                     {guidance.diyFilterGuide.title}
                   </h2>
                   <span className="text-xs text-slate-500">

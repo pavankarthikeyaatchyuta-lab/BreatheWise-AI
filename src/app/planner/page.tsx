@@ -60,7 +60,7 @@ export default function PlannerPage() {
         <div className="flex items-center gap-2">
           <div className="flex items-center bg-white border border-slate-200/80 rounded-full px-3.5 py-1.5 shadow-xs text-xs font-bold text-slate-800">
             <CalendarClock className="w-3.5 h-3.5 text-emerald-600 mr-2" />
-            <span>Today, 26 Jan</span>
+            <span>Today, {todayDateStr}</span>
           </div>
           <Link
             href="/assistant"

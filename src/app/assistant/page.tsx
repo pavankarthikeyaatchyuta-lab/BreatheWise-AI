@@ -189,7 +189,7 @@ export default function AssistantPage() {
       {/* Main Chat Stream Container */}
       <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs flex flex-col min-h-[520px] justify-between">
         {/* Messages Stream */}
-        <div className="space-y-6 overflow-y-auto max-h-[60vh] pr-2">
+        <div className="space-y-6 overflow-y-auto max-h-[60vh] pr-2" aria-live="polite">
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
 
@@ -400,6 +400,9 @@ export default function AssistantPage() {
               <Send className="w-4 h-4" />
             </button>
           </form>
+          <p className="text-[10px] text-slate-400 mt-2 px-1 text-center">
+            Privacy Notice: Non-medical household indicators (presence of infants/seniors, asthma sensitivity, commute mode) are included in the prompt context to tailor environmental guidance. No personal names or exact GPS coordinates are captured. BreatheWise AI provides environmental decision support, not licensed medical treatment.
+          </p>
         </div>
       </div>
     </div>

@@ -40,13 +40,13 @@ describe('3-Tier Explainable Impact Engine Suite', () => {
   it('calculates Tier 3 Greenhouse Gas (CO2e) reduction with CEA grid factor', () => {
     // 15 km trip:
     // Solo Petrol Car: 15 * 142g = 2130g = 2.13 kg CO2e
-    // Delhi Metro: 15 * 26g = 390g = 0.39 kg CO2e
-    // Net avoided = 2.13 - 0.39 = 1.74 kg CO2e
+    // Delhi Metro: 15 * 24.5g (CEA v22.0) = 367.5g ~ 0.37 kg CO2e
+    // Net avoided = 2.13 - 0.37 = 1.76 kg CO2e
     const impact = calculateExplainableImpact(15, 'SOLO_PETROL_CAR', 'DELHI_METRO');
 
     expect(impact.tier3Ghg.baselineCo2eKg).toBe(2.13);
-    expect(impact.tier3Ghg.adaptedCo2eKg).toBe(0.39);
-    expect(impact.tier3Ghg.netAvoidedCo2eKg).toBe(1.74);
+    expect(impact.tier3Ghg.adaptedCo2eKg).toBe(0.37);
+    expect(impact.tier3Ghg.netAvoidedCo2eKg).toBe(1.76);
     expect(impact.tier3Ghg.constantsUsed.gridFactor).toContain('0.675 kg CO₂/kWh');
     expect(impact.tier3Ghg.constantsUsed.gridFactor).toContain('Version 22.0');
   });

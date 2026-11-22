@@ -38,3 +38,40 @@ export const AIAssistantResponseSchema = z.object({
 });
 
 export type AIAssistantResponse = z.infer<typeof AIAssistantResponseSchema>;
+
+/**
+ * Zod Schema for Incoming Client Chat Requests
+ * Validates message length, restricts language codes, clamps AQI values (0-500),
+ * and prevents unvalidated or malicious context injection.
+ */
+export const ChatIncomingRequestSchema = z.object({
+  message: z.string().min(1, 'Message is required').max(1000, 'Message cannot exceed 1000 characters'),
+  language: z.enum(['en', 'te', 'hi']).optional().default('en'),
+  aqiState: z.object({
+    city: z.string().max(100).optional(),
+    region: z.string().max(100).optional(),
+    isNCR: z.boolean().optional(),
+    current: z.object({
+      aqi: z.number().min(0).max(500).nullable().optional(),
+      dominantPollutantName: z.string().max(100).nullable().optional(),
+      category: z.string().max(50).nullable().optional(),
+    }).optional(),
+  }).optional(),
+  profile: z.object({
+    city: z.string().max(100).optional(),
+    isNCR: z.boolean().optional(),
+    hasInfantsOrChildren: z.boolean().optional(),
+    hasElderly: z.boolean().optional(),
+    hasRespiratorySensitivity: z.boolean().optional(),
+    hasPregnantMember: z.boolean().optional(),
+    primaryCommuteMode: z.enum(['TWO_WHEELER', 'OPEN_AUTO', 'NON_AC_BUS', 'AC_METRO', 'SOLO_CAR', 'CARPOOL']).optional(),
+    commuteDistanceKm: z.number().min(0).max(500).optional(),
+    commuteDepartureTime: z.string().max(10).optional(),
+    hasKitchenPartition: z.boolean().optional(),
+    hasKitchenExhaustFan: z.boolean().optional(),
+    hasAirPurifier: z.boolean().optional(),
+    purifierCount: z.number().min(0).max(50).optional(),
+  }).optional(),
+});
+
+export type ChatIncomingRequest = z.infer<typeof ChatIncomingRequestSchema>;

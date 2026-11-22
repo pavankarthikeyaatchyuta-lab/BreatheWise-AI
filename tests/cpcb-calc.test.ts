@@ -119,7 +119,7 @@ describe('CPCB 8-Pollutant NAQI Calculation Suite', () => {
       {
         no2: { value: 60, hoursRecorded: 24 },
         so2: { value: 30, hoursRecorded: 24 },
-        co: { value: 1.2, hoursRecorded: 8 },
+        co: { value: 1.2, hoursRecorded: 24 },
       },
       mockProvenance
     );
@@ -129,18 +129,43 @@ describe('CPCB 8-Pollutant NAQI Calculation Suite', () => {
     expect(result.validation.reasons.some((r) => r.includes('Missing mandatory particulate'))).toBe(true);
   });
 
-  it('rejects 24-hour calculation when recorded hours are below 16h minimum', () => {
+  it('seamlessly interpolates decimal concentrations without null gaps', () => {
+    // 30.5 µg/m³ should map seamlessly rather than returning null
+    const sub30_5 = calculateSubIndex('pm25', 30.5);
+    expect(sub30_5).not.toBeNull();
+    expect(sub30_5).toBeGreaterThanOrEqual(50);
+    expect(sub30_5).toBeLessThanOrEqual(51);
+
+    // 60.5 µg/m³ maps to Moderate boundary
+    const sub60_5 = calculateSubIndex('pm25', 60.5);
+    expect(sub60_5).not.toBeNull();
+    expect(sub60_5).toBeGreaterThanOrEqual(100);
+    expect(sub60_5).toBeLessThanOrEqual(101);
+
+    // 1.05 mg/m³ CO maps seamlessly
+    const subCo = calculateSubIndex('co', 1.05);
+    expect(subCo).not.toBeNull();
+    expect(subCo).toBeGreaterThanOrEqual(50);
+  });
+
+  it('marks atmospheric model forecast as non-official station measurement', () => {
+    const modelProvenance: ProvenanceMetadata = {
+      ...mockProvenance,
+      type: 'ATMOSPHERIC_MODEL_FORECAST',
+      sourceName: 'Open-Meteo Copernicus CAMS',
+    };
+
     const result = evaluateCPCBNAQI(
       {
-        pm25: { value: 95, hoursRecorded: 12 }, // < 16 hours!
-        pm10: { value: 140, hoursRecorded: 24 },
-        no2: { value: 50, hoursRecorded: 24 },
+        pm25: { value: 65, hoursRecorded: 1 },
+        pm10: { value: 110, hoursRecorded: 1 },
+        no2: { value: 35, hoursRecorded: 1 },
       },
-      mockProvenance
+      modelProvenance
     );
 
     expect(result.validation.isValidOfficial).toBe(false);
-    expect(result.validation.hasMinimumHours).toBe(false);
-    expect(result.validation.reasons.some((r) => r.includes('only 12h of data'))).toBe(true);
+    expect(result.aqi).toBeDefined(); // Still provides indicative estimate
+    expect(result.validation.reasons.some((r) => r.includes('Model-derived indicative estimate'))).toBe(true);
   });
 });

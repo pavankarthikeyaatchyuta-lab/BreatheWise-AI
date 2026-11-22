@@ -179,15 +179,23 @@ Respond with a JSON object with this exact structure:
 
   try {
     const ai = new GoogleGenAI({ apiKey });
+    
+    // In production Node, use AbortController signal to terminate upstream connection on timeout
+    // In test environment, skip signal injection to avoid jsdom/undici prototype divergence
+    const isTest = typeof process !== 'undefined' && (process.env.NODE_ENV === 'test' || Boolean(process.env.VITEST));
+    const abortController = !isTest && typeof AbortController !== 'undefined' ? new AbortController() : undefined;
 
-    // 7-second timeout to quickly fall back to deterministic engine if upstream model is experiencing high demand (503)
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => {
+    let timerId: NodeJS.Timeout | undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timerId = setTimeout(() => {
+        if (abortController) {
+          try { abortController.abort(); } catch {}
+        }
         const timeoutErr = new Error('Upstream model response timed out or overloaded (503)');
         (timeoutErr as { status?: number }).status = 503;
         reject(timeoutErr);
-      }, 7000)
-    );
+      }, 7000);
+    });
 
     const generatePromise = ai.models.generateContent({
       model: modelName,
@@ -195,7 +203,10 @@ Respond with a JSON object with this exact structure:
       config: {
         systemInstruction,
         responseMimeType: 'application/json',
+        ...(abortController ? { abortSignal: abortController.signal } : {}),
       },
+    }).finally(() => {
+      if (timerId) clearTimeout(timerId);
     });
 
     const response = await Promise.race([generatePromise, timeoutPromise]);

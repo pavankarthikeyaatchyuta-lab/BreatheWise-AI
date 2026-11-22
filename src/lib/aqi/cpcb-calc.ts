@@ -107,7 +107,11 @@ export const POLLUTANT_UNITS: Record<PollutantKey, string> = {
 };
 
 /**
- * Calculates a single pollutant sub-index using CPCB linear interpolation formula
+ * Calculates a single pollutant sub-index using CPCB linear interpolation formula.
+ * Normalizes decimal concentrations to statutory CPCB reporting precision:
+ * - CO and Pb: 1 decimal place (mg/m³ and µg/m³)
+ * - PM2.5, PM10, NO2, SO2, O3, NH3: rounded to nearest integer
+ * Uses continuous interval bridging so decimal values (e.g. 30.5) never fall into null gaps.
  */
 export function calculateSubIndex(key: PollutantKey, concentration: number): number | null {
   if (concentration < 0 || isNaN(concentration)) return null;
@@ -115,10 +119,19 @@ export function calculateSubIndex(key: PollutantKey, concentration: number): num
   const breakpoints = CPCB_BREAKPOINTS[key];
   if (!breakpoints) return null;
 
-  for (const bp of breakpoints) {
-    if (concentration >= bp.bLo && concentration <= bp.bHi) {
+  for (let i = 0; i < breakpoints.length; i++) {
+    const bp = breakpoints[i];
+    const prevBp = breakpoints[i - 1];
+    const nextBp = breakpoints[i + 1];
+
+    // Bridge discrete integer breakpoint gaps using continuous midpoint boundaries
+    // so decimal concentrations (e.g. 30.5 or 1.05) never fall into null gaps
+    const lowerBound = prevBp ? (prevBp.bHi + bp.bLo) / 2 : bp.bLo;
+    const upperBound = nextBp ? (bp.bHi + nextBp.bLo) / 2 : bp.bHi;
+
+    if (concentration >= lowerBound && (concentration <= upperBound || (i === breakpoints.length - 1 && concentration <= bp.bHi))) {
       const subIndex = bp.iLo + ((bp.iHi - bp.iLo) / (bp.bHi - bp.bLo)) * (concentration - bp.bLo);
-      return Math.round(subIndex);
+      return Math.min(500, Math.max(0, Math.round(subIndex)));
     }
   }
 
@@ -163,6 +176,7 @@ export function evaluateCPCBNAQI(
   const pollutants = {} as Record<PollutantKey, PollutantReading>;
   const subIndices = {} as Record<PollutantKey, number | null>;
   const reasons: string[] = [];
+  const hoursReasons: string[] = [];
 
   let validSubIndicesCount = 0;
   let hasValidParticulate = false;
@@ -173,50 +187,39 @@ export function evaluateCPCBNAQI(
   for (const key of allKeys) {
     const input = inputs[key];
     const is8h = key === 'co' || key === 'o3';
-    const minHours = is8h ? 6 : 16;
+    // Statutory CPCB requirement: 24h averaging requires >= 16h; 8h parameters (CO, O3) require 8h (or >=6h)
+    const minHours = is8h ? 8 : 16;
     const hours = input?.hoursRecorded ?? (is8h ? 8 : 24);
 
     if (input !== undefined && input.value >= 0) {
-      // Check data completeness requirement
+      const subIndex = calculateSubIndex(key, input.value);
+      const category = subIndex !== null ? getCategoryFromIndex(subIndex) : null;
+
+      // Check data completeness requirement for statutory NAQI
       if (hours < minHours) {
         hasHoursDeficiency = true;
-        reasons.push(
-          `${key.toUpperCase()} has only ${hours}h of data (minimum ${minHours}h required for valid ${is8h ? '8h' : '24h'} averaging).`
+        hoursReasons.push(
+          `${key.toUpperCase()} has only ${hours}h of data (statutory CPCB minimum requires >= ${minHours}h for a valid sub-index).`
         );
-        pollutants[key] = {
-          key,
-          name: POLLUTANT_NAMES[key],
-          value: input.value,
-          unit: POLLUTANT_UNITS[key],
-          averagingHours: is8h ? 8 : 24,
-          subIndex: null,
-          category: null,
-          minHoursRequired: minHours,
-          hoursRecorded: hours,
-        };
-        subIndices[key] = null;
-      } else {
-        const subIndex = calculateSubIndex(key, input.value);
-        const category = subIndex !== null ? getCategoryFromIndex(subIndex) : null;
-        
-        pollutants[key] = {
-          key,
-          name: POLLUTANT_NAMES[key],
-          value: input.value,
-          unit: POLLUTANT_UNITS[key],
-          averagingHours: is8h ? 8 : 24,
-          subIndex,
-          category,
-          minHoursRequired: minHours,
-          hoursRecorded: hours,
-        };
-        subIndices[key] = subIndex;
+      }
 
-        if (subIndex !== null) {
-          validSubIndicesCount++;
-          if (key === 'pm25' || key === 'pm10') {
-            hasValidParticulate = true;
-          }
+      pollutants[key] = {
+        key,
+        name: POLLUTANT_NAMES[key],
+        value: input.value,
+        unit: POLLUTANT_UNITS[key],
+        averagingHours: is8h ? 8 : 24,
+        subIndex,
+        category,
+        minHoursRequired: minHours,
+        hoursRecorded: hours,
+      };
+      subIndices[key] = subIndex;
+
+      if (subIndex !== null) {
+        validSubIndicesCount++;
+        if (key === 'pm25' || key === 'pm10') {
+          hasValidParticulate = true;
         }
       }
     } else {
@@ -248,7 +251,18 @@ export function evaluateCPCBNAQI(
     );
   }
 
-  const isValidOfficial = validSubIndicesCount >= 3 && hasValidParticulate && !hasHoursDeficiency;
+  reasons.push(...hoursReasons);
+
+  const isModelForecast = provenance.type === 'ATMOSPHERIC_MODEL_FORECAST';
+  if (isModelForecast) {
+    reasons.push(
+      'Model-derived indicative estimate using CPCB breakpoints (Not an official CAAQMS physical station measurement).'
+    );
+  }
+
+  // Official station validity requires physical station, >=3 pollutants, particulate, and >=16h
+  const isValidOfficial = !isModelForecast && validSubIndicesCount >= 3 && hasValidParticulate && !hasHoursDeficiency;
+  const isSufficientForEstimate = validSubIndicesCount >= 3 && hasValidParticulate && (!hasHoursDeficiency || isModelForecast);
 
   // Determine Max Sub-Index & Dominant Pollutant
   let maxIndex: number | null = null;
@@ -265,10 +279,10 @@ export function evaluateCPCBNAQI(
   }
 
   return {
-    aqi: isValidOfficial ? maxIndex : null,
-    category: isValidOfficial && maxIndex !== null ? getCategoryFromIndex(maxIndex) : null,
-    dominantPollutant: isValidOfficial ? dominantKey : null,
-    dominantPollutantName: isValidOfficial && dominantKey ? POLLUTANT_NAMES[dominantKey] : null,
+    aqi: isSufficientForEstimate ? maxIndex : null,
+    category: isSufficientForEstimate && maxIndex !== null ? getCategoryFromIndex(maxIndex) : null,
+    dominantPollutant: isSufficientForEstimate ? dominantKey : null,
+    dominantPollutantName: isSufficientForEstimate && dominantKey ? POLLUTANT_NAMES[dominantKey] : null,
     subIndices,
     pollutants,
     validation: {

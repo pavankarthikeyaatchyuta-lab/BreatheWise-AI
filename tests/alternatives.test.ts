@@ -19,7 +19,7 @@ describe('Sustainable Alternatives & Passenger-Kilometre Engine Suite', () => {
 
     const metro = comparison.alternatives.find((a) => a.mode === 'DELHI_METRO');
     expect(metro).toBeDefined();
-    expect(metro!.co2eKg).toBe(0.39);
+    expect(metro!.co2eKg).toBe(0.37); // 15 km * 24.5 g/pkm (CEA v22.0) = 0.3675 ~ 0.37 kg
     expect(metro!.exposureRiskLevel).toBe('LOW');
   });
 
