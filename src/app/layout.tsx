@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@/components/layout/AppShell';
+import { SkipToContent } from '@/components/common/SkipToContent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen bg-[#f5f8f6] text-slate-900 antialiased`}>
+        <SkipToContent />
         <AppShell>{children}</AppShell>
       </body>
     </html>

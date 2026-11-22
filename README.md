@@ -5,7 +5,7 @@
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://breathe-wise-ai-ivxy.vercel.app/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7_Strict-blue)](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI)
-[![Tests](https://img.shields.io/badge/tests-87%20passing-success)](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI)
+[![Tests](https://img.shields.io/badge/tests-110%20passing-success)](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI)
 [![Repo Size](https://img.shields.io/badge/repo%20size-%3C%201%20MB-informational)](https://github.com/pavankarthikeyaatchyuta-lab/BreatheWise-AI)
 [![Next.js](https://img.shields.io/badge/Next.js-15_App_Router-black)](https://breathe-wise-ai-ivxy.vercel.app/)
 [![Production Deployment](https://img.shields.io/badge/Vercel-Live%20Operational-success?logo=vercel)](https://breathe-wise-ai-ivxy.vercel.app/)
@@ -54,7 +54,7 @@
 - **Language:** TypeScript 5.7 (Strict Mode, 0 compile errors)
 - **Styling & Design System:** Tailwind CSS with Lucide Icons and responsive mobile navigation
 - **AI & LLM Orchestration:** Google Gemini API (`@google/genai` v3.6.0) with server-side route execution
-- **Test Framework:** Vitest 3.2.7 with 87 automated tests across 10 specialized test suites
+- **Test Framework:** Vitest 3.2.7 with 110 automated tests across 13 specialized test suites
 - **DOM & Workflow Testing:** React Testing Library + jsdom for component interaction assertions
 - **State Management:** React Context (CityContext & ScenarioContext) with LocalStorage persistence
 - **Repository Size:** **~200 KB** clean archive, well below the 10 MB competition limit
@@ -111,14 +111,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Running Automated Tests
 ```bash
-npm run test -- --run   # Runs all 87 automated tests across 10 test suites
+npm run test -- --run   # Runs all 110 automated tests across 13 test suites
 ```
 
 ### Production Build & Linting
 ```bash
 npx tsc --noEmit        # TypeScript strict verification (0 errors)
 npm run lint            # ESLint check (0 errors, 0 warnings)
-npm run build           # Next.js production build (12/12 routes compiled)
+npm run build           # Next.js production build (13/13 routes compiled)
 npm run start           # Run production server
 ```
 

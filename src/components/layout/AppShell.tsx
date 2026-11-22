@@ -39,7 +39,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
           onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
           mobileMenuOpen={mobileMenuOpen}
         />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto outline-none">
           {children}
         </main>
         <Footer />

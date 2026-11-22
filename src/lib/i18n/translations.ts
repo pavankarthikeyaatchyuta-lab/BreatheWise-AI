@@ -71,7 +71,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Translations> = {
     diurnalForecast: '24-Hour Diurnal Forecast',
     viewDetails: 'View Calculation Proof',
     scientificDisclaimer: 'Evidence-based environmental guidance. Does not replace clinical healthcare advice.',
-    languageNotice: '',
+    languageNotice: 'Note: Full navigation and AI assistant are localized; technical equations and impact formulas are presented in standard SI scientific notation.',
   },
   te: {
     navDashboard: 'డ్యాష్‌బోర్డ్',
