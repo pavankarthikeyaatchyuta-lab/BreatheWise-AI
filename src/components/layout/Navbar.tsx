@@ -18,7 +18,7 @@ import {
 import { cn } from '@/lib/utils/cn';
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Air Intelligence', icon: Wind },
+  { href: '/dashboard', label: 'Air Intelligence', icon: Wind },
   { href: '/planner', label: 'Daily Planner', icon: CalendarClock },
   { href: '/indoor-coach', label: 'Indoor Coach', icon: Home },
   { href: '/alternatives', label: 'Alternatives', icon: ArrowLeftRight },

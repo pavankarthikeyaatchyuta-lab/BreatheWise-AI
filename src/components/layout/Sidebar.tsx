@@ -26,7 +26,7 @@ interface NavItemConfig {
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
-  { href: '/', transKey: 'navDashboard', fallback: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', transKey: 'navDashboard', fallback: 'Dashboard', icon: LayoutDashboard },
   { href: '/planner', transKey: 'navPlanner', fallback: 'Daily Planner', icon: CalendarClock },
   { href: '/indoor-coach', transKey: 'navIndoorCoach', fallback: 'Indoor Coach', icon: Wind },
   { href: '/alternatives', transKey: 'navAlternatives', fallback: 'Alternatives', icon: ArrowLeftRight },
