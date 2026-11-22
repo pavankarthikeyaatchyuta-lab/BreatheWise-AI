@@ -37,14 +37,44 @@
 
 ---
 
-## ⚡ The BreatheWise Environmental Intelligence Engine
+## 🎯 Chosen Vertical
 
-### How it Works:
+**Urban Air Quality & Sustainable Living (PromptWars Virtual Challenge 6)**  
+Engineered specifically for Indian metropolitan families, schools, and vulnerable populations (infants, asthmatics, seniors) navigating severe winter smog, seasonal biomass burning, vehicular emissions, and diurnal atmospheric boundary layer inversions across major Indian metros (Delhi-NCR, Mumbai, Bengaluru, Hyderabad, Kolkata, Pune, Chennai, Lucknow, Patna).
+
+---
+
+## 🧠 Approach & Logic
+
+Rather than relying on ungrounded or speculative generative chatbots, BreatheWise AI operates on a **Dual-Layer Intelligence Architecture** strictly separating empathetic natural-language personalization from deterministic mathematical and statutory calculations:
+
+1. **Generative AI Layer (Google Gemini API):**  
+   Interprets unstructured family prompts, personalizes daily schedules based on household health vulnerabilities, and provides culturally nuanced guidance across English, Hindi (हिन्दी), and Telugu (తెలుగు). Enforces two-stage prompt guardrails rejecting prompt extraction and jailbreaks, validated with strict runtime Zod schemas, with zero credential leakage and automatic deterministic fallback.
+
+2. **Deterministic Environmental Engine:**  
+   Executes exact Central Pollution Control Board (CPCB) continuous piecewise linear interpolation math, tracks diurnal atmospheric boundary layer shifts (nocturnal radiative cooling vs afternoon solar convective dispersion), synchronizes with statutory CAQM GRAP directives (Stages I–IV), and computes decoupled lifecycle carbon reductions benchmarked directly to the **Central Electricity Authority (CEA) Baseline Database Version 22.0**.
+
+---
+
+## ⚙️ How the Solution Works
+
 1. **Statutory CPCB NAQI Interpolation:** Ingests 8 criteria pollutants ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3, \text{NH}_3, \text{Pb}$) and applies continuous midpoint boundary bridging, eliminating decimal null gaps. Enforces the statutory 16-hour monitored completeness rule for official station readings while transparently classifying atmospheric models as indicative estimates.
-2. **Diurnal Boundary Layer Dynamics:** Models diurnal mixing height shifts during winter smog episodes. Accurately identifies the morning ground inversion ($6:00-9:30\text{ AM}$) and evening traffic trapping window ($19:30-22:00\text{ PM}$) while guiding families toward the safe afternoon solar dispersion window.
+2. **Diurnal Boundary Layer Dynamics:** Models diurnal mixing height shifts during winter smog episodes. Accurately identifies the morning ground inversion ($6:00-9:30\text{ AM}$) and evening traffic trapping window ($19:30-22:00\text{ PM}$) while guiding families toward the safe afternoon solar dispersion window ($13:00-16:00\text{ PM}$).
 3. **Zero-Fake-Sensors Procedural Coach:** Refuses to invent indoor air numbers without calibrated hardware. Instead, applies procedural heuristics: cooking exhaust compartmentalization, wet mopping to prevent dust resuspension, and certified DIY Corsi-Rosenthal box filter specs (MERV-13, non-ozone box fans).
 4. **Decoupled 3-Tier Impact Calculations:** Strictly separates personal smog duration avoidance (hrs) from local tailpipe particulate reduction (g) and global grid lifecycle greenhouse gas reduction (kg $\text{CO}_2\text{e}$). Transit emissions cite the **Central Electricity Authority (CEA) Baseline Database Version 22.0** ($0.675\text{ kg CO}_2/\text{kWh}$).
 5. **Dynamic Regulatory Synchronization:** Maps ambient air quality to Commission for Air Quality Management (CAQM) GRAP triggers (Stages I–IV for Delhi-NCR), generating tailored RWA and school actions.
+
+---
+
+## 📐 Assumptions Made
+
+To ensure total transparency, auditability, and scientific honesty, BreatheWise AI explicitly operates under the following documented engineering assumptions:
+
+1. **CPCB Statutory Completeness Rule:** In strict accordance with the CPCB 2014 NAQI guidelines, an ambient reading is marked as an officially valid regulatory AQI if and only if: (a) at least 3 criteria pollutants are recorded, (b) at least one particulate matter pollutant ($\text{PM}_{2.5}$ or $\text{PM}_{10}$) is monitored, and (c) at least 16 hourly samples are available for 24-hour averages (or 8 hours for CO/O₃).
+2. **Atmospheric Model Provenance Tracking:** Gridded atmospheric models (e.g. Copernicus CAMS via Open-Meteo at $\sim 45\text{ km}$ resolution) are explicitly flagged as indicative model estimates (`isValidOfficial: false`) and are never misrepresented to users as certified physical ground stations.
+3. **Absence of Calibrated Indoor Sensors (Zero-Fake-Sensors Policy):** In the absence of certified, physically paired indoor hardware, the system will never fabricate numerical indoor $\text{PM}_{2.5}$ readings. It exclusively offers evidence-based procedural protocols (ventilation gating, wet mopping, cooking exhaust management).
+4. **Decoupled Life-Cycle Grid Carbon Baseline:** Grid carbon calculations for electric buses and metro rail transit strictly adopt the **Central Electricity Authority (CEA) Baseline Database Version 22.0** weighted average grid emission factor ($0.675\text{ kg CO}_2\text{e/kWh}$) to eliminate inflated clean-tech claims.
+5. **Neighborhood Privacy by Design:** Geographical coordinates are truncated to 2 decimal places ($\sim 1.1\text{ km}$ neighborhood grid scale) to prevent pinpoint household exposure while providing accurate local atmospheric telemetry.
 
 ---
 
